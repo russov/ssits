@@ -13,8 +13,8 @@
 #define new DEBUG_NEW
 #endif
 
-#define count_column 10
-#define count_row 5
+#define count_column 27
+#define count_row 17
 
 
 // CAboutDlg dialog used for App About
