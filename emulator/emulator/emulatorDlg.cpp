@@ -366,7 +366,7 @@ BOOL CemulatorDlg::OnInitDialog()
 			current_Y = 0;
 		}
 		*/
-		SetTimer(2, 1000, 0);
+		SetTimer(2, 40, 0);
 			
 		/*RECT pRect;
 		int iRed = rand()%255;

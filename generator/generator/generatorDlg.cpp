@@ -7,6 +7,11 @@
 #include "generatorDlg.h"
 #include "afxdialogex.h"
 
+#include <fstream>
+#include <istream>
+#include <iostream>
+#include <string>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -63,6 +68,7 @@ BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CgeneratorDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -151,3 +157,96 @@ HCURSOR CgeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CgeneratorDlg::OnBnClickedButton1()
+{
+	int my = 0;
+
+	TCHAR	szBuffer[10000] = {0}; 
+	UINT    nActual = 0; 
+	//CFile	myFile;
+
+	std::ifstream in;
+
+	in.open(CString( _T("..\\symbols\\1.txt")));
+
+	CString temp;
+
+	char f = '0';
+
+	CString backGroundColor = CString("RGB(0,0,0)");
+	CString symbolColor = CString("RGB(255,255,255)");
+
+	while (f != EOF)
+	{
+		f = in.get();
+
+		if (f == '0')
+			write_file(backGroundColor);
+		else if (f == '1')
+			write_file(symbolColor);
+
+
+
+	//while( std::getline(in, temp))
+    {                         
+       /* char symbol;
+        char *s;
+        in.get(symbol);
+        in.get(symbol1);
+
+        if(symbol != ' ' && (!(symbol1 >= 'À' && symbol1 <= 'ß') ) && symbol!='\n' && symbol1!='\n')
+        {
+            temp1 = temp1+temp;
+            temp1.push_back('.');
+            temp1.push_back(symbol);
+            temp1.push_back(symbol1);
+
+            continue;
+        }
+        else
+        {
+            temp1 = temp1+temp;
+            temp1.push_back('.');
+            return temp1;
+        }*/
+    }
+	}
+
+
+	in.close();
+
+
+	/*
+	if ( myFile.Open( _T("..\\symbols\\1.txt"), CFile::modeRead ))
+	{
+	    myFile.Seek( 0, CFile::begin );
+	    
+		get
+
+		nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
+	}*/
+	// TODO: Add your control notification handler code here
+}
+
+bool CgeneratorDlg::write_file(const CString &text)
+{
+    CString NameFile = CString("../../emulator/inbox/log_out.txt");
+    std::ofstream os;
+	os.open(NameFile, std::ios::app);
+    if(!os )
+    {
+        printf("File not found");
+        return(0);
+    }
+
+	CString h = CString("123");
+
+    CT2CA pszConvertedAnsiString (text);
+ 
+    std::string strStd (pszConvertedAnsiString);
+
+    os << strStd.substr(0,strStd.size()) << std::endl;
+    os.close();
+}
