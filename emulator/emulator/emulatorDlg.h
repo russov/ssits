@@ -49,4 +49,5 @@ public:
 	afx_msg void OnBnClickedButton1();
 	CEdit m_Edit1;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	CEdit m_PathDirectory;
 };

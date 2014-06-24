@@ -66,6 +66,7 @@ CgeneratorDlg::CgeneratorDlg(CWnd* pParent /*=NULL*/)
 void CgeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_Speed);
 }
 
 BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
@@ -73,6 +74,7 @@ BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CgeneratorDlg::OnBnClickedButton1)
+	ON_EN_CHANGE(IDC_EDIT1, &CgeneratorDlg::OnEnChangeEdit1)
 END_MESSAGE_MAP()
 
 
@@ -108,6 +110,8 @@ BOOL CgeneratorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	m_Speed.SetWindowTextW(CString("10"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -173,7 +177,7 @@ void CgeneratorDlg::OnBnClickedButton1()
 
 	std::ifstream in;
 
-	in.open(CString( _T("..\\symbols\\1.txt")));
+	in.open(CString( _T("..\\symbols\\A.txt")));
 
 	CString temp;
 
@@ -188,15 +192,12 @@ void CgeneratorDlg::OnBnClickedButton1()
 	{
 		f = in.get();
 
-		if (f == '\n')
+		if (f == '\n' || f == EOF)
 		{
-			for (int i = column_number; i < count_column; ++i)
+			for (int i = column_number; i < ((row_count%2 == 1)?(count_column-1):count_column); ++i)
 				write_file(backGroundColor);
-			if (row_count%2)
-				column_number = 1;
-			else
-				column_number = 0;
 			++row_count;
+			column_number = 0;
 		}
 		else if (f == '0')
 		{
@@ -256,7 +257,7 @@ void CgeneratorDlg::OnBnClickedButton1()
 
 bool CgeneratorDlg::write_file(const CString &text)
 {
-    CString NameFile = CString("../../emulator/inbox/log_out.txt");
+    CString NameFile = CString("../../emulator/inbox/1.txt");
     std::ofstream os;
 	os.open(NameFile, std::ios::app);
     if(!os )
@@ -273,4 +274,16 @@ bool CgeneratorDlg::write_file(const CString &text)
 
     os << strStd.substr(0,strStd.size()) << std::endl;
     os.close();
+
+	return true;
+}
+
+void CgeneratorDlg::OnEnChangeEdit1()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
 }

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 
 // CgeneratorDlg dialog
@@ -34,4 +35,6 @@ protected:
 
 public:
 	afx_msg void OnBnClickedButton1();
+	afx_msg void OnEnChangeEdit1();
+	CEdit m_Speed;
 };

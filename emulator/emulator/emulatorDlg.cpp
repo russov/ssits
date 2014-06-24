@@ -64,6 +64,7 @@ void CemulatorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_BUTTON1, m_Button1);
 	DDX_Control(pDX, IDC_EDIT1, m_Edit1);
+	DDX_Control(pDX, IDC_EDIT2, m_PathDirectory);
 }
 
 BEGIN_MESSAGE_MAP(CemulatorDlg, CDialogEx)
@@ -83,22 +84,18 @@ void CemulatorDlg::OnTimer(UINT_PTR nIDEvent)
 	UINT    nActual = 0; 
 	CFile	myFile;
 
-	if ( myFile.Open( _T("..\\inbox\\1.txt"), CFile::modeRead ))
+	CString path;
+	m_PathDirectory.GetWindowTextA(path);
+
+	if ( myFile.Open( path, CFile::modeRead ))
 	{
 	    myFile.Seek( 0, CFile::begin );
 	    nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
+				
+		SetColorBallons(CString(szBuffer));
+		myFile.Close();
 	}
 	
-	CString h = CString(szBuffer);
-
-	
-
-	SetColorBallons(CString(szBuffer));
-
-	                                                                                                                                                         
-
-	myFile.Close();
-
 	CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -319,6 +316,13 @@ BOOL CemulatorDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	{
+		TCHAR pathBuffer[10000] = {0};
+		GetCurrentDirectoryA(10000, pathBuffer);
+		
+		CString path(pathBuffer);
+		path += CString("\\..\\inbox\\1.txt");
+		m_PathDirectory.SetWindowTextA(path);
+
 		// TODO: Add extra validation here
 		
 		/*CRect dialog_Rect;
@@ -366,7 +370,7 @@ BOOL CemulatorDlg::OnInitDialog()
 			current_Y = 0;
 		}
 		*/
-		SetTimer(2, 40, 0);
+		SetTimer(2, 1000, 0);
 			
 		/*RECT pRect;
 		int iRed = rand()%255;
@@ -425,7 +429,8 @@ void CemulatorDlg::OnPaint()
 		// Draw the icon
 		dc.DrawIcon(x, y, m_hIcon);
 
-		CPaintDC* pDC=new CPaintDC(this);    pDC->Rectangle(1,1,10,10);
+		CPaintDC* pDC=new CPaintDC(this);    
+		pDC->Rectangle(1,1,10,10);
 	}
 	else
 	{
@@ -459,7 +464,7 @@ void CemulatorDlg::OnBnClickedButton1()
 	pDC->SetBkColor(lRGB);
 	UpdateData(false);
 	
-	for (int i = 0; i < edit_Vector.size(); ++i)
+	for (unsigned int i = 0; i < edit_Vector.size(); ++i)
 	{
 		CEdit *edit = edit_Vector[i];
 
