@@ -12,6 +12,10 @@
 #include <iostream>
 #include <string>
 
+
+#define count_column 27
+#define count_row 17
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -178,15 +182,35 @@ void CgeneratorDlg::OnBnClickedButton1()
 	CString backGroundColor = CString("RGB(0,0,0)");
 	CString symbolColor = CString("RGB(255,255,255)");
 
+	int column_number = 0;
+	int row_count = 0;
 	while (f != EOF)
 	{
 		f = in.get();
 
-		if (f == '0')
+		if (f == '\n')
+		{
+			for (int i = column_number; i < count_column; ++i)
+				write_file(backGroundColor);
+			if (row_count%2)
+				column_number = 1;
+			else
+				column_number = 0;
+			++row_count;
+		}
+		else if (f == '0')
+		{
 			write_file(backGroundColor);
+			++column_number;
+		}
 		else if (f == '1')
+		{
 			write_file(symbolColor);
+			++column_number;
+			
+		}
 
+		
 
 
 	//while( std::getline(in, temp))
