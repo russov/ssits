@@ -177,7 +177,7 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		
 		HBRUSH hBrush = CreateSolidBrush(lRGB);
 		
-		CRect rect(current_Y,current_X,current_Y + lenght_Balloon, current_X + lenght_Balloon);
+		CRect rect(current_X,current_Y,current_X + lenght_Balloon, current_Y + lenght_Balloon);
 
 		current_Y += lenght_Balloon; 
 
@@ -190,17 +190,17 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		pDC->SetBkColor(lRGB);
 		UpdateData(false);
 
-		++column;
+		++row;
 		
-		if ((column >= count_column) || (row%2 && ((column + 1) == count_column)))
+		if ((row >= count_row) || (column%2 && ((row + 1) == count_row)))
 		{
-			++row;
-			column = 0;
+			++column;
+			row = 0;
 			
 			current_X += lenght_Balloon;
 			current_Y = 0;
 
-			if (row%2)
+			if (column%2)
 				current_Y += lenght_Balloon / 2;
 		}
 		
