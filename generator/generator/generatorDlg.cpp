@@ -10,7 +10,8 @@
 #include <fstream>
 #include <istream>
 #include <iostream>
-#include <string>
+
+//#include <list>
 
 
 #define count_column 27
@@ -165,27 +166,113 @@ HCURSOR CgeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CgeneratorDlg::OnBnClickedButton1()
+void CgeneratorDlg::add_Blank_Screen_Begin()
 {
-	int my = 0;
+	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+		for (int ii = 0; ii < count_column; ++ii)
+			m_Storage_Screen_Point[i].insert(m_Storage_Screen_Point[i].begin(), '0');
+}
 
-	TCHAR	szBuffer[10000] = {0}; 
-	UINT    nActual = 0; 
+void CgeneratorDlg::add_Blank_Screen_End()
+{
+	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+	{
+		for (int ii = 0; ii < count_column; ++ii)
+		{
+			if(i == 0 && (m_Storage_Screen_Point[i].size()-1)%2 == 0 && *(m_Storage_Screen_Point[0].end()-1) != ' ')
+				m_Storage_Screen_Point[i].push_back(' ');
+			else
+				m_Storage_Screen_Point[i].push_back('0');
+		}
+	}
+}
+
+void CgeneratorDlg::fill_Useful_Data_Screen()
+{
+//int my = 0;
+
+	//TCHAR	szBuffer[10000] = {0}; 
+	//UINT    nActual = 0; 
 	//CFile	myFile;
 
-	std::ifstream in;
+	/*std::vector<bool> keep_Point_Screen;
+	std::list<bool> keep_Point_Screen_Not_Even_Columns;
+	std::list<bool> keep_Point_Screen_Even_Columns;
 
-	in.open(CString( _T("..\\symbols\\A.txt")));
+	std::vector <std::string> storage_Screen_Point;
+	*/
+	
 
-	CString temp;
+	std::string incoming_Sequence = "111";
 
-	char f = '0';
+	for (int i = 0; i < incoming_Sequence.size(); ++i)
+	{
+		std::ifstream in;
+		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
 
-	CString backGroundColor = CString("RGB(0,0,0)");
-	CString symbolColor = CString("RGB(255,255,255)");
+		//CString temp;
 
+		//char symbol = '0';
+
+		//CString backGroundColor = CString("RGB(0,0,0)");
+		//CString symbolColor = CString("RGB(255,255,255)");
+		
+		//int column_number = 0;
+		//int row_count = 0;
+	
+		
+		char row[256] = {0};
+	
+		int size_Letter = 0;
+		int current_row = 0;
+		while (!in.eof())
+		{
+			in.getline(row, 256);
+			std::string row_Letter(row);
+			if (!current_row)
+				size_Letter = row_Letter.size();
+
+			if (size_Letter != row_Letter.size())
+				return;
+
+			if (m_Storage_Screen_Point.size() > current_row)
+			{
+				std::vector <std::string>::iterator iter;
+
+				m_Storage_Screen_Point[current_row].append(row_Letter);
+			} else
+			{
+				m_Storage_Screen_Point.push_back(row_Letter);
+			}
+			++current_row;
+		}
+
+		in.close();
+	}
+	/*
+	while (f != EOF)
+	{
+		std::list<bool>::iterator it;
+
+		f = in.get();
+
+		if (column_number%2) // not even column
+		{
+			it = keep_Point_Screen_Not_Even_Columns.begin() +  m kbm9,hkl 
+
+			if (f == '0' || f == '1')
+				keep_Point_Screen_Even_Columns.insert(0, f);
+		} else
+		{
+		
+		}
+
+		if (f == '\n' || f == EOF)
+		{
+		}
+	}
+	*/
+	/*
 	int column_number = 0;
 	int row_count = 0;
 	while (f != EOF)
@@ -208,14 +295,10 @@ void CgeneratorDlg::OnBnClickedButton1()
 		{
 			write_file(symbolColor);
 			++column_number;
-			
 		}
-
-		
-
-
+		*/
 	//while( std::getline(in, temp))
-    {                         
+   // {                         
        /* char symbol;
         char *s;
         in.get(symbol);
@@ -227,7 +310,6 @@ void CgeneratorDlg::OnBnClickedButton1()
             temp1.push_back('.');
             temp1.push_back(symbol);
             temp1.push_back(symbol1);
-
             continue;
         }
         else
@@ -235,24 +317,62 @@ void CgeneratorDlg::OnBnClickedButton1()
             temp1 = temp1+temp;
             temp1.push_back('.');
             return temp1;
-        }*/
-    }
-	}
-
-
-	in.close();
-
-
+        }
+    }*/
+//	}
 	/*
 	if ( myFile.Open( _T("..\\symbols\\1.txt"), CFile::modeRead ))
 	{
 	    myFile.Seek( 0, CFile::begin );
-	    
 		get
-
 		nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
 	}*/
 	// TODO: Add your control notification handler code here
+}
+
+void CgeneratorDlg::create_Image()
+{
+	CString backGroundColor = CString("RGB(0,0,0)");
+	CString symbolColor = CString("RGB(255,255,255)");
+
+	for (int j = 0; j < count_column; j+=2)
+	{
+		for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+		{
+			char symbol = (m_Storage_Screen_Point[i])[j];
+			if (symbol == '0' || symbol == '1')
+				write_file(symbol == '1' ? symbolColor : backGroundColor);
+		}
+		if (j < (count_column-2))
+		{
+			for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+			{
+				char symbol = (m_Storage_Screen_Point[i])[j + 1];
+				if (symbol == '0' || symbol == '1')
+					write_file(symbol == '1' ? symbolColor : backGroundColor);
+			}
+		}
+	}
+		
+	/*for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+	{
+		char symbol = ((m_Storage_Screen_Point[i])[count_column]);
+		if (symbol == '0' || symbol == '1')
+			write_file(symbol == '1' ? symbolColor : backGroundColor);
+	}*/
+}
+
+void CgeneratorDlg::OnBnClickedButton1()
+{
+	current_Size_Screen = 0;
+	m_Storage_Screen_Point.clear();
+
+	fill_Useful_Data_Screen();
+	//add_Blank_Screen_Begin();
+	add_Blank_Screen_End();
+
+	create_Image();
+
 }
 
 bool CgeneratorDlg::write_file(const CString &text)
@@ -266,13 +386,11 @@ bool CgeneratorDlg::write_file(const CString &text)
         return(0);
     }
 
-	CString h = CString("123");
-
-    CT2CA pszConvertedAnsiString (text);
+	CT2CA pszConvertedAnsiString (text);
  
     std::string strStd (pszConvertedAnsiString);
 
-    os << strStd.substr(0,strStd.size()) << std::endl;
+    os << strStd.substr(0, strStd.size()) << std::endl;
     os.close();
 
 	return true;

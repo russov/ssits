@@ -5,6 +5,8 @@
 #pragma once
 #include "afxwin.h"
 
+#include <string>
+#include <vector> 
 
 // CgeneratorDlg dialog
 class CgeneratorDlg : public CDialogEx
@@ -32,6 +34,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	bool write_file(const CString &text);
+	void add_Blank_Screen_Begin();
+	void add_Blank_Screen_End();
+	void fill_Useful_Data_Screen();
+	void create_Image();
+
+	std::vector <std::string> m_Storage_Screen_Point;
+	int current_Size_Screen;
 
 public:
 	afx_msg void OnBnClickedButton1();
