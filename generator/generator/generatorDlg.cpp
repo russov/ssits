@@ -203,7 +203,7 @@ void CgeneratorDlg::fill_Useful_Data_Screen()
 	*/
 	
 
-	std::string incoming_Sequence = "111";
+	std::string incoming_Sequence = "11A";
 
 	for (int i = 0; i < incoming_Sequence.size(); ++i)
 	{
@@ -337,7 +337,7 @@ void CgeneratorDlg::create_Image()
 
 	for (int j = 0; j < count_column; j+=2)
 	{
-		for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
 		{
 			char symbol = (m_Storage_Screen_Point[i])[j];
 			if (symbol == '0' || symbol == '1')
@@ -366,7 +366,9 @@ void CgeneratorDlg::OnBnClickedButton1()
 {
 	current_Size_Screen = 0;
 	m_Storage_Screen_Point.clear();
-
+	std::string NameFile("../../emulator/inbox/1.txt");
+	std::remove(NameFile.c_str());
+	
 	fill_Useful_Data_Screen();
 	//add_Blank_Screen_Begin();
 	add_Blank_Screen_End();
@@ -377,7 +379,7 @@ void CgeneratorDlg::OnBnClickedButton1()
 
 bool CgeneratorDlg::write_file(const CString &text)
 {
-    CString NameFile = CString("../../emulator/inbox/1.txt");
+    std::string NameFile("../../emulator/inbox/1.txt");
     std::ofstream os;
 	os.open(NameFile, std::ios::app);
     if(!os )

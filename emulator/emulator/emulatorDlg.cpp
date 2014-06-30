@@ -149,21 +149,19 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 
 	this->GetClientRect(&dialog_Rect);
 
-	int current_Y = 0;
-	int current_X = 0;
 
 	int lenght_Balloon = dialog_Rect.right / count_column;
+	
+	int current_Y = dialog_Rect.bottom  - lenght_Balloon - lenght_Balloon;
+	int current_X = dialog_Rect.left;
 
 	const std::tr1::sregex_token_iterator end;
 	for (std::tr1::sregex_token_iterator i(sequence.begin(), sequence.end(), pattern); i != end; ++i)
 	{
-		//std::cout << (*i).str() << std::endl;
 		std::tr1::match_results<std::string::const_iterator> result;
 		std::string f = (*i).str();
 
 		std::tr1::regex_match(f, result, pattern);
-
-		//RECT pRect;
 
 		int iRed = atoi(result[1].str().c_str());
 		int iGrn = atoi(result[2].str().c_str());
@@ -171,18 +169,18 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 
 		long lRGB = RGB(iRed, iGrn, iBlu);
 		
-	//	CDC * pDC = m_Edit1.GetDC();
-				
-		CClientDC * pDC = new CClientDC(this);
-		
+		CClientDC * pDC = new CClientDC(this);	
 		HBRUSH hBrush = CreateSolidBrush(lRGB);
 		
-		CRect rect(current_X,current_Y,current_X + lenght_Balloon, current_Y + lenght_Balloon);
+		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
 
-		current_Y += lenght_Balloon; 
-
-		
-		//ScreenToClient(&pRect);
+		if (column%2 == 0)
+		{
+			current_Y -= lenght_Balloon;
+		} else
+		{
+			current_Y += lenght_Balloon;
+		}
 
 		pDC->SelectObject(hBrush); 
 		pDC->Ellipse(&rect);
@@ -192,77 +190,22 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 
 		++row;
 		
-		if ((row >= count_row) || (column%2 && ((row + 1) == count_row)))
-		{
-			++column;
+		if (row >= count_row || (column%2 && (row+1) == count_row))
+		{			
 			row = 0;
-			
 			current_X += lenght_Balloon;
-			current_Y = 0;
 
-			if (column%2)
-				current_Y += lenght_Balloon / 2;
+			if (column%2 == 0)
+			{
+				current_Y += lenght_Balloon + lenght_Balloon / 2;	
+			} else
+			{
+				current_Y -= lenght_Balloon / 2;
+			}
+			++column;
 		}
-		
-		
-	//	pDC->res DeleteDC();
-
 		DeleteObject(hBrush);
 		delete pDC;
-
-		/*
-		for(int i = 0; i < count_row; ++i)
-		{
-			if (i%2)
-				current_Y += lenght_Balloon / 2;
-
-			for (int j = 0; j < count_column; ++j)
-			{
-				if (i%2 && ((j + 1) == count_column))
-					break;
-			*/	
-
-
-		//if (number >= edit_Vector.size())
-			//break;
-
-
-		//CClientDC * pDC = new CClientDC(this) ;//(edit_Vector[number])->GetDC();
-	
-		//(edit_Vector[number])->GetWindowRect(&pRect);
-
-
-		//pDC->Rectangle(1,50,100,150);
-
-
-		/*++number;
-
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		
-		//WINDOWPLACEMENT pl;
-
-		//(edit_Vector[number++])->GetWindowPlacement(&pl);
-
-		//pRect = pl.rcNormalPosition;
-		
-		ScreenToClient(&pRect);
-
-		pDC->SelectObject(hBrush); 
-		pDC->Ellipse(&pRect);
-		
-		pDC->SetBkColor(lRGB);
-		UpdateData(false);
-		
-		int y = 0;
-		
-		*/
-
-
-		/*
-		std::cout << result[1] << std::endl;
-		std::cout << result[2] << std::endl;
-		std::cout << result[3] << std::endl;
-		*/
 	}
 
 }
