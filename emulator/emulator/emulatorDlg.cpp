@@ -91,9 +91,9 @@ void CemulatorDlg::OnTimer(UINT_PTR nIDEvent)
 	{
 	    myFile.Seek( 0, CFile::begin );
 	    nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
-				
+		myFile.Close();		
+
 		SetColorBallons(CString(szBuffer));
-		myFile.Close();
 	}
 	
 	CDialogEx::OnTimer(nIDEvent);
@@ -128,20 +128,12 @@ void CemulatorDlg::ClearScreen()
 
 void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 {
-	
-	
-	ClearScreen();
-	
-	
+	//ClearScreen();
 	
 	const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
 
 	std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
  
-
-
-
-
 	int row = 0;
 	int column = 0;
 
@@ -207,24 +199,23 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		DeleteObject(hBrush);
 		delete pDC;
 	}
-
 }
 
 void CemulatorDlg::SetBalloon(int red, int grn, int blu)
 {
 	RECT pRect;
 	int iRed = rand()%255;
-		int iGrn = rand()%255;
-		int iBlu = rand()%255;
-		long lRGB = RGB(iRed, iGrn, iBlu);
-		CDC * pDC = m_Edit1.GetDC();
+	int iGrn = rand()%255;
+	int iBlu = rand()%255;
+	long lRGB = RGB(iRed, iGrn, iBlu);
+	CDC * pDC = m_Edit1.GetDC();
 
-		m_Edit1.GetClientRect(&pRect);
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		pDC->SelectObject(hBrush); 
-		pDC->Rectangle(&pRect);
-		pDC->SetBkColor(lRGB);
-		UpdateData(false);			
+	m_Edit1.GetClientRect(&pRect);
+	HBRUSH hBrush = CreateSolidBrush(lRGB);
+	pDC->SelectObject(hBrush); 
+	pDC->Rectangle(&pRect);
+	pDC->SetBkColor(lRGB);
+	UpdateData(false);			
 }
 
 BOOL CemulatorDlg::OnInitDialog()
@@ -313,7 +304,7 @@ BOOL CemulatorDlg::OnInitDialog()
 			current_Y = 0;
 		}
 		*/
-		SetTimer(2, 1000, 0);
+		SetTimer(2, 100, 0);
 			
 		/*RECT pRect;
 		int iRed = rand()%255;
@@ -388,8 +379,6 @@ HCURSOR CemulatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CemulatorDlg::OnBnClickedButton1()
 {
 	// TODO: Add your control notification handler code here
@@ -417,7 +406,6 @@ void CemulatorDlg::OnBnClickedButton1()
 
 		int h = 0;
 	}
-
 }
 
 

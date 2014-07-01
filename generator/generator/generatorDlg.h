@@ -37,7 +37,7 @@ protected:
 	void add_Blank_Screen_Begin();
 	void add_Blank_Screen_End();
 	void fill_Useful_Data_Screen();
-	void create_Image();
+	void create_Image(int shift = 0);
 
 	std::vector <std::string> m_Storage_Screen_Point;
 	int current_Size_Screen;
@@ -45,5 +45,10 @@ protected:
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnEnChangeEdit1();
+
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
 	CEdit m_Speed;
+	afx_msg void OnBnClickedButton2();
+	CEdit m_Shift;
 };

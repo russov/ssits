@@ -11,8 +11,9 @@
 #include <istream>
 #include <iostream>
 
-//#include <list>
+#include <ctime>
 
+//#include <list>
 
 #define count_column 27
 #define count_row 17
@@ -68,6 +69,7 @@ void CgeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_Speed);
+	DDX_Control(pDX, IDC_EDIT2, m_Shift);
 }
 
 BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
@@ -76,6 +78,8 @@ BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CgeneratorDlg::OnBnClickedButton1)
 	ON_EN_CHANGE(IDC_EDIT1, &CgeneratorDlg::OnEnChangeEdit1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CgeneratorDlg::OnBnClickedButton2)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -113,6 +117,7 @@ BOOL CgeneratorDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	m_Speed.SetWindowTextW(CString("10"));
+	m_Shift.SetWindowTextW(CString("0"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -166,18 +171,49 @@ HCURSOR CgeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	std::string NameFile("../../emulator/inbox/1.txt");
+	std::remove(NameFile.c_str());
+
+	//static int last_Time_ms = CTime::GetCurrentTime().ge;
+
+	static clock_t time1 = clock();
+	// do something heavy
+	clock_t time2 = clock();
+	clock_t timediff = time2 - time1;
+
+	float timediff_sec = ((float)timediff) / CLOCKS_PER_SEC;
+
+	//time1 = time2;
+
+
+		create_Image((timediff/800) *2 );
+
+
+
+
+
+	CDialogEx::OnTimer(nIDEvent);
+}
+
 void CgeneratorDlg::add_Blank_Screen_Begin()
 {
 	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
 		for (int ii = 0; ii < count_column; ++ii)
-			m_Storage_Screen_Point[i].insert(m_Storage_Screen_Point[i].begin(), '0');
+		{
+			if(i == 0 && (m_Storage_Screen_Point[i].size()-1)%2 == 0 && *(m_Storage_Screen_Point[0].begin()) != ' ')
+				m_Storage_Screen_Point[i].insert(m_Storage_Screen_Point[i].begin(), ' ');
+			else
+			    m_Storage_Screen_Point[i].insert(m_Storage_Screen_Point[i].begin(), '0');
+		}
 }
 
 void CgeneratorDlg::add_Blank_Screen_End()
 {
 	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
 	{
-		for (int ii = 0; ii < count_column; ++ii)
+		for (int ii = 0; ii < count_column-1; ++ii)
 		{
 			if(i == 0 && (m_Storage_Screen_Point[i].size()-1)%2 == 0 && *(m_Storage_Screen_Point[0].end()-1) != ' ')
 				m_Storage_Screen_Point[i].push_back(' ');
@@ -189,37 +225,12 @@ void CgeneratorDlg::add_Blank_Screen_End()
 
 void CgeneratorDlg::fill_Useful_Data_Screen()
 {
-//int my = 0;
-
-	//TCHAR	szBuffer[10000] = {0}; 
-	//UINT    nActual = 0; 
-	//CFile	myFile;
-
-	/*std::vector<bool> keep_Point_Screen;
-	std::list<bool> keep_Point_Screen_Not_Even_Columns;
-	std::list<bool> keep_Point_Screen_Even_Columns;
-
-	std::vector <std::string> storage_Screen_Point;
-	*/
-	
-
 	std::string incoming_Sequence = "11A";
 
 	for (int i = 0; i < incoming_Sequence.size(); ++i)
 	{
 		std::ifstream in;
 		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
-
-		//CString temp;
-
-		//char symbol = '0';
-
-		//CString backGroundColor = CString("RGB(0,0,0)");
-		//CString symbolColor = CString("RGB(255,255,255)");
-		
-		//int column_number = 0;
-		//int row_count = 0;
-	
 		
 		char row[256] = {0};
 	
@@ -249,88 +260,9 @@ void CgeneratorDlg::fill_Useful_Data_Screen()
 
 		in.close();
 	}
-	/*
-	while (f != EOF)
-	{
-		std::list<bool>::iterator it;
-
-		f = in.get();
-
-		if (column_number%2) // not even column
-		{
-			it = keep_Point_Screen_Not_Even_Columns.begin() +  m kbm9,hkl 
-
-			if (f == '0' || f == '1')
-				keep_Point_Screen_Even_Columns.insert(0, f);
-		} else
-		{
-		
-		}
-
-		if (f == '\n' || f == EOF)
-		{
-		}
-	}
-	*/
-	/*
-	int column_number = 0;
-	int row_count = 0;
-	while (f != EOF)
-	{
-		f = in.get();
-
-		if (f == '\n' || f == EOF)
-		{
-			for (int i = column_number; i < ((row_count%2 == 1)?(count_column-1):count_column); ++i)
-				write_file(backGroundColor);
-			++row_count;
-			column_number = 0;
-		}
-		else if (f == '0')
-		{
-			write_file(backGroundColor);
-			++column_number;
-		}
-		else if (f == '1')
-		{
-			write_file(symbolColor);
-			++column_number;
-		}
-		*/
-	//while( std::getline(in, temp))
-   // {                         
-       /* char symbol;
-        char *s;
-        in.get(symbol);
-        in.get(symbol1);
-
-        if(symbol != ' ' && (!(symbol1 >= 'À' && symbol1 <= 'ß') ) && symbol!='\n' && symbol1!='\n')
-        {
-            temp1 = temp1+temp;
-            temp1.push_back('.');
-            temp1.push_back(symbol);
-            temp1.push_back(symbol1);
-            continue;
-        }
-        else
-        {
-            temp1 = temp1+temp;
-            temp1.push_back('.');
-            return temp1;
-        }
-    }*/
-//	}
-	/*
-	if ( myFile.Open( _T("..\\symbols\\1.txt"), CFile::modeRead ))
-	{
-	    myFile.Seek( 0, CFile::begin );
-		get
-		nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
-	}*/
-	// TODO: Add your control notification handler code here
 }
 
-void CgeneratorDlg::create_Image()
+void CgeneratorDlg::create_Image(int shift)
 {
 	CString backGroundColor = CString("RGB(0,0,0)");
 	CString symbolColor = CString("RGB(255,255,255)");
@@ -339,7 +271,7 @@ void CgeneratorDlg::create_Image()
 	{
 		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
 		{
-			char symbol = (m_Storage_Screen_Point[i])[j];
+			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 			if (symbol == '0' || symbol == '1')
 				write_file(symbol == '1' ? symbolColor : backGroundColor);
 		}
@@ -347,19 +279,12 @@ void CgeneratorDlg::create_Image()
 		{
 			for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
 			{
-				char symbol = (m_Storage_Screen_Point[i])[j + 1];
+				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 				if (symbol == '0' || symbol == '1')
 					write_file(symbol == '1' ? symbolColor : backGroundColor);
 			}
 		}
 	}
-		
-	/*for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
-	{
-		char symbol = ((m_Storage_Screen_Point[i])[count_column]);
-		if (symbol == '0' || symbol == '1')
-			write_file(symbol == '1' ? symbolColor : backGroundColor);
-	}*/
 }
 
 void CgeneratorDlg::OnBnClickedButton1()
@@ -370,10 +295,16 @@ void CgeneratorDlg::OnBnClickedButton1()
 	std::remove(NameFile.c_str());
 	
 	fill_Useful_Data_Screen();
-	//add_Blank_Screen_Begin();
+	add_Blank_Screen_Begin();
 	add_Blank_Screen_End();
 
-	create_Image();
+	CString shift;
+	m_Shift.GetWindowTextW(shift);
+
+	//const char* cstr = (LPCTSTR)shift;
+	atoi((char*)(LPCTSTR)shift);
+
+	create_Image(atoi((char*)(LPCTSTR)shift));
 
 }
 
@@ -406,4 +337,19 @@ void CgeneratorDlg::OnEnChangeEdit1()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
+}
+
+
+void CgeneratorDlg::OnBnClickedButton2()
+{
+	current_Size_Screen = 0;
+	m_Storage_Screen_Point.clear();
+
+	fill_Useful_Data_Screen();
+	add_Blank_Screen_Begin();
+	add_Blank_Screen_End();
+
+	create_Image();
+
+	SetTimer(2, 400, 0);
 }
