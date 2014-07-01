@@ -44,10 +44,13 @@ protected:
 
 	void ClearScreen();
 
+	BOOL receive_Data();
+
 public:
-	CButton m_Button1;
 	afx_msg void OnBnClickedButton1();
-	CEdit m_Edit1;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	
+	CButton m_Button1;
+	CEdit m_Edit1;
 	CEdit m_PathDirectory;
 };

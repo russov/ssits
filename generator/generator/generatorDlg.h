@@ -8,6 +8,8 @@
 #include <string>
 #include <vector> 
 
+#include "../../CommonData.h"
+
 // CgeneratorDlg dialog
 class CgeneratorDlg : public CDialogEx
 {
@@ -38,6 +40,7 @@ protected:
 	void add_Blank_Screen_End();
 	void fill_Useful_Data_Screen();
 	void create_Image(int shift = 0);
+	BOOL send_DataUDP(struct send_Data data);
 
 	std::vector <std::string> m_Storage_Screen_Point;
 	int current_Size_Screen;
@@ -47,8 +50,8 @@ public:
 	afx_msg void OnEnChangeEdit1();
 
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-
-	CEdit m_Speed;
 	afx_msg void OnBnClickedButton2();
+	
+	CEdit m_Speed;
 	CEdit m_Shift;
 };
