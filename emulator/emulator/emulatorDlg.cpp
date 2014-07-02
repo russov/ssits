@@ -312,7 +312,7 @@ BOOL CemulatorDlg::OnInitDialog()
 			current_Y = 0;
 		}
 		*/
-		SetTimer(2, 100, 0);
+		//SetTimer(2, 100, 0);
 
 	//	receive_Data();
 			
@@ -331,7 +331,7 @@ BOOL CemulatorDlg::OnInitDialog()
 		UpdateData(false);*/
 
 	}
-
+	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -391,6 +391,8 @@ HCURSOR CemulatorDlg::OnQueryDragIcon()
 
 void CemulatorDlg::OnBnClickedButton1()
 {
+	receive_Data();
+
 	// TODO: Add your control notification handler code here
 	RECT pRect;
 	int iRed = rand()%255;
@@ -468,11 +470,14 @@ BOOL CemulatorDlg::receive_Data()
       if (bsize==SOCKET_ERROR)
 		printf("recvfrom() error: %d\n", WSAGetLastError());
 	  
-	  if (data.e == 'A')
+	  SetColorBallons(CString(data.sequence_frame));
+
+	  /*
+	  if (data.sequence_frame == 'A')
 	  {
 		int y = 0;
 	  }
-
+	  */
 	  /*
       // Определяем IP-адрес клиента и прочие атрибуты
       HOSTENT *hst;

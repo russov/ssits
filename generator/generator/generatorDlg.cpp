@@ -195,9 +195,18 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 	//time1 = time2;
 
 
-		create_Image((timediff/800) *2 );
+		//create_Image((timediff/800) *2 );
 
-
+	CString g = create_Image_To_Send((timediff/800) *2);
+	send_Data data;
+	//LPTSTR l = g.GetBuffer();
+	//const char *c = l;
+	//CString z(_T("I love CString!\r\n"));
+//char sz[100];
+sprintf(data.sequence_frame, "%S", g);
+	
+//memcpy(data.sequence_frame, g.GetBuffer(), 7582);
+	send_DataUDP(data);
 
 
 
@@ -292,6 +301,35 @@ void CgeneratorDlg::create_Image(int shift)
 			}
 		}
 	}
+}
+
+CString CgeneratorDlg::create_Image_To_Send(int shift)
+{
+	CString backGroundColor = CString("RGB(0,0,0)");
+	CString symbolColor = CString("RGB(255,255,255)");
+
+	CString result;
+
+	for (int j = 0; j < count_column; j+=2)
+	{
+		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
+		{
+			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
+			if (symbol == '0' || symbol == '1')
+				result += symbol == '1' ? symbolColor : backGroundColor;
+		}
+		if (j < (count_column-2))
+		{
+			for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+			{
+				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
+				if (symbol == '0' || symbol == '1')
+					result += symbol == '1' ? symbolColor : backGroundColor;
+			}
+		}
+	}
+
+	return result;
 }
 
 void CgeneratorDlg::OnBnClickedButton1()
@@ -417,7 +455,7 @@ BOOL CgeneratorDlg::send_DataUDP(struct send_Data data)
 	  */
       // Передача сообщений на сервер
 	  
-	  data.e = 'A';
+	 // data.sequence_frame = ;
 
       sendto(my_sock, (char *)&data,sizeof(data),0,
         (sockaddr *) &dest_addr,sizeof(dest_addr));

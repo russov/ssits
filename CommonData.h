@@ -1,4 +1,4 @@
 struct send_Data
 {
-	char e; 
+	char sequence_frame[7582]; 
 };
