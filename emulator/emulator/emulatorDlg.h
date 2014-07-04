@@ -44,7 +44,7 @@ protected:
 
 	void ClearScreen();
 
-	BOOL receive_Data();
+	static UINT receive_Data(LPVOID param);
 
 public:
 	afx_msg void OnBnClickedButton1();

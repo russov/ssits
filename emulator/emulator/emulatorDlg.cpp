@@ -186,7 +186,7 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		pDC->Ellipse(&rect);
 		
 		pDC->SetBkColor(lRGB);
-		UpdateData(false);
+//		UpdateData(false);
 
 		++row;
 		
@@ -332,6 +332,8 @@ BOOL CemulatorDlg::OnInitDialog()
 
 	}
 	
+	AfxBeginThread(receive_Data, this); //Запуск потока
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -391,7 +393,7 @@ HCURSOR CemulatorDlg::OnQueryDragIcon()
 
 void CemulatorDlg::OnBnClickedButton1()
 {
-	receive_Data();
+	//receive_Data();
 
 	// TODO: Add your control notification handler code here
 	RECT pRect;
@@ -420,7 +422,7 @@ void CemulatorDlg::OnBnClickedButton1()
 	}
 }
 
-BOOL CemulatorDlg::receive_Data()
+UINT CemulatorDlg::receive_Data(LPVOID param)
 {
 	char buff[1024];
 
@@ -470,7 +472,8 @@ BOOL CemulatorDlg::receive_Data()
       if (bsize==SOCKET_ERROR)
 		printf("recvfrom() error: %d\n", WSAGetLastError());
 	  
-	  SetColorBallons(CString(data.sequence_frame));
+	  CemulatorDlg* dlg = (CemulatorDlg*)param;
+	  dlg->SetColorBallons(CString(data.sequence_frame));
 
 	  /*
 	  if (data.sequence_frame == 'A')

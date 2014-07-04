@@ -55,4 +55,7 @@ public:
 	
 	CEdit m_Speed;
 	CEdit m_Shift;
+	CEdit m_Not_Found_Symbols;
+	CButton m_Stop;
+	afx_msg void OnBnClickedButton3();
 };

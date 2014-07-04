@@ -19,6 +19,7 @@
 
 #define PORT 666
 #define SERVERADDR "127.0.0.1"
+#define IdEventTimer 2
 
 //#include <list>
 
@@ -77,6 +78,8 @@ void CgeneratorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_Speed);
 	DDX_Control(pDX, IDC_EDIT2, m_Shift);
+	DDX_Control(pDX, IDC_EDIT3, m_Not_Found_Symbols);
+	DDX_Control(pDX, IDC_BUTTON3, m_Stop);
 }
 
 BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
@@ -87,6 +90,7 @@ BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT1, &CgeneratorDlg::OnEnChangeEdit1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CgeneratorDlg::OnBnClickedButton2)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BUTTON3, &CgeneratorDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -125,6 +129,8 @@ BOOL CgeneratorDlg::OnInitDialog()
 
 	m_Speed.SetWindowTextW(CString("10"));
 	m_Shift.SetWindowTextW(CString("0"));
+	m_Not_Found_Symbols.ShowWindow(FALSE);
+	m_Not_Found_Symbols.SetWindowTextW(CString("Not found directory with symbols"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -197,7 +203,7 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 
 		//create_Image((timediff/800) *2 );
 
-	CString g = create_Image_To_Send((timediff/800) *2);
+	CString g = create_Image_To_Send(2/*(timediff/800) *2*/);
 	send_Data data;
 	//LPTSTR l = g.GetBuffer();
 	//const char *c = l;
@@ -241,13 +247,25 @@ void CgeneratorDlg::add_Blank_Screen_End()
 
 void CgeneratorDlg::fill_Useful_Data_Screen()
 {
-	std::string incoming_Sequence = "11A";
+	std::string incoming_Sequence = "11AAA11A1A1A";
 
 	for (int i = 0; i < incoming_Sequence.size(); ++i)
 	{
 		std::ifstream in;
 		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
 		
+		if (!in.good())
+		{
+			in.open(CString(CString("symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
+			if (!in.good())
+			{
+				m_Not_Found_Symbols.ShowWindow(TRUE);
+				break;
+			}
+		}
+
+		m_Not_Found_Symbols.ShowWindow(FALSE);
+
 		char row[256] = {0};
 	
 		int size_Letter = 0;
@@ -394,12 +412,13 @@ void CgeneratorDlg::OnBnClickedButton2()
 	m_Storage_Screen_Point.clear();
 
 	fill_Useful_Data_Screen();
-	add_Blank_Screen_Begin();
+	//add_Blank_Screen_Begin();
 	add_Blank_Screen_End();
 
 	create_Image();
 
-	SetTimer(2, 400, 0);
+	KillTimer(IdEventTimer);
+	SetTimer(IdEventTimer, 40, 0);
 }
 
 BOOL CgeneratorDlg::send_DataUDP(struct send_Data data)
@@ -485,4 +504,10 @@ BOOL CgeneratorDlg::send_DataUDP(struct send_Data data)
     // шаг последний - выход
     closesocket(my_sock);
     WSACleanup();
+}
+
+void CgeneratorDlg::OnBnClickedButton3()
+{
+	KillTimer(IdEventTimer);
+	// TODO: Add your control notification handler code here
 }
