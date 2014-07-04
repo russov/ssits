@@ -127,7 +127,7 @@ BOOL CgeneratorDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	m_Speed.SetWindowTextW(CString("10"));
+	m_Speed.SetWindowTextW(CString("200"));
 	m_Shift.SetWindowTextW(CString("0"));
 	m_Not_Found_Symbols.ShowWindow(FALSE);
 	m_Not_Found_Symbols.SetWindowTextW(CString("Not found directory with symbols"));
@@ -186,43 +186,39 @@ HCURSOR CgeneratorDlg::OnQueryDragIcon()
 
 void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 {
-	std::string NameFile("../../emulator/inbox/1.txt");
-	std::remove(NameFile.c_str());
-
-	//static int last_Time_ms = CTime::GetCurrentTime().ge;
-
 	static clock_t time1 = clock();
-	// do something heavy
 	clock_t time2 = clock();
-	clock_t timediff = time2 - time1;
+	clock_t timediff = time2 - time1;	
+	CString speed;
+	m_Speed.GetWindowTextW(speed);
+	int speed_dig = _wtoi(speed);
 
-	float timediff_sec = ((float)timediff) / CLOCKS_PER_SEC;
+	if (!speed_dig)
+		speed_dig = 1;
 
-	//time1 = time2;
+	CString g = create_Image_To_Send((timediff/speed_dig) *2);
 
+	CString shift;
+	//shift.Format("%d", (timediff/speed_dig) *2);
 
-		//create_Image((timediff/800) *2 );
+//	CString str;
+	_itot_s( timediff, shift.GetBufferSetLength( 40 ), 40, 10 );
+	shift.ReleaseBuffer();
 
-	CString g = create_Image_To_Send(2/*(timediff/800) *2*/);
+	write_file(shift);
+
 	send_Data data;
-	//LPTSTR l = g.GetBuffer();
-	//const char *c = l;
-	//CString z(_T("I love CString!\r\n"));
-//char sz[100];
-sprintf(data.sequence_frame, "%S", g);
+	sprintf(data.sequence_frame, "%S", g);
 	
-//memcpy(data.sequence_frame, g.GetBuffer(), 7582);
 	send_DataUDP(data);
-
-
-
+	
 	CDialogEx::OnTimer(nIDEvent);
 }
 
 void CgeneratorDlg::add_Blank_Screen_Begin()
 {
 	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
-		for (int ii = 0; ii < count_column; ++ii)
+		for (int ii = 0; ii < count_column-1; ++ii)
 		{
 			if(i == 0 && (m_Storage_Screen_Point[i].size()-1)%2 == 0 && *(m_Storage_Screen_Point[0].begin()) != ' ')
 				m_Storage_Screen_Point[i].insert(m_Storage_Screen_Point[i].begin(), ' ');
@@ -235,7 +231,7 @@ void CgeneratorDlg::add_Blank_Screen_End()
 {
 	for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
 	{
-		for (int ii = 0; ii < count_column-1; ++ii)
+		for (int ii = 0; ii < count_column; ++ii)
 		{
 			if(i == 0 && (m_Storage_Screen_Point[i].size()-1)%2 == 0 && *(m_Storage_Screen_Point[0].end()-1) != ' ')
 				m_Storage_Screen_Point[i].push_back(' ');
@@ -365,7 +361,7 @@ void CgeneratorDlg::OnBnClickedButton1()
 	m_Shift.GetWindowTextW(shift);
 
 	//const char* cstr = (LPCTSTR)shift;
-	atoi((char*)(LPCTSTR)shift);
+	//atoi((char*)(LPCTSTR)shift);
 
 	create_Image(atoi((char*)(LPCTSTR)shift));
 
@@ -412,7 +408,7 @@ void CgeneratorDlg::OnBnClickedButton2()
 	m_Storage_Screen_Point.clear();
 
 	fill_Useful_Data_Screen();
-	//add_Blank_Screen_Begin();
+	add_Blank_Screen_Begin();
 	add_Blank_Screen_End();
 
 	create_Image();
