@@ -7,6 +7,13 @@
 #include "emulatorDlg.h"
 #include "afxdialogex.h"
 
+/*
+#include <fstream>
+#include <istream>
+#include <iostream>
+*/
+#include <ctime>
+
 #include <regex>
 
 #include <stdio.h>
@@ -137,7 +144,22 @@ void CemulatorDlg::ClearScreen()
 void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 {
 	//ClearScreen();
-	
+	//debag
+/*	{
+		
+		clock_t time1 = clock();
+	CString shift1;
+	//shift.Format("%d", (timediff/speed_dig) *2);
+
+//	CString str;
+	_itot_s( time1, shift1.GetBufferSetLength( 40 ), 40, 10 );
+	shift1.ReleaseBuffer();
+
+	write_file(shift1);
+
+	}*/
+	//
+
 	const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
 
 	std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
@@ -207,8 +229,40 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		DeleteObject(hBrush);
 		delete pDC;
 	}
-}
+/*	{
+	clock_t time1 = clock();
+	CString shift1;
+	//shift.Format("%d", (timediff/speed_dig) *2);
 
+//	CString str;
+	_itot_s( time1, shift1.GetBufferSetLength( 40 ), 40, 10 );
+	shift1.ReleaseBuffer();
+
+	write_file(shift1 + CString("  End"));
+	}*/
+}
+/*
+bool CemulatorDlg::write_file(const CString &text)
+{
+    std::string NameFile("../../emulator/inbox/2.txt");
+    std::ofstream os;
+	os.open(NameFile, std::ios::app);
+    if(!os )
+    {
+        printf("File not found");
+        return(0);
+    }
+
+	CT2CA pszConvertedAnsiString (text);
+ 
+    std::string strStd (pszConvertedAnsiString);
+
+    os << strStd.substr(0, strStd.size()) << std::endl;
+    os.close();
+
+	return true;
+}
+*/
 void CemulatorDlg::SetBalloon(int red, int grn, int blu)
 {
 	RECT pRect;
@@ -332,7 +386,7 @@ BOOL CemulatorDlg::OnInitDialog()
 
 	}
 	
-	AfxBeginThread(receive_Data, this); //Запуск потока
+	AfxBeginThread(receive_Data, this, THREAD_PRIORITY_TIME_CRITICAL); //Запуск потока
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

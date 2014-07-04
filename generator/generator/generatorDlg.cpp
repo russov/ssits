@@ -195,18 +195,25 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (!speed_dig)
 		speed_dig = 1;
+	
+	static int shift = timediff/speed_dig;
+	if (shift < timediff/speed_dig || (shift && (shift > timediff/speed_dig)))
+	{
+		shift = timediff/speed_dig;
+		time1 += timediff%speed_dig;
+	}
 
-	CString g = create_Image_To_Send((timediff/speed_dig) *2);
+	CString g = create_Image_To_Send((shift) *2);
 
-	CString shift;
+	/*CString shift1;
 	//shift.Format("%d", (timediff/speed_dig) *2);
 
 //	CString str;
-	_itot_s( timediff, shift.GetBufferSetLength( 40 ), 40, 10 );
-	shift.ReleaseBuffer();
+	_itot_s( timediff, shift1.GetBufferSetLength( 40 ), 40, 10 );
+	shift1.ReleaseBuffer();
 
-	write_file(shift);
-
+	write_file(shift1);
+	*/
 	send_Data data;
 	sprintf(data.sequence_frame, "%S", g);
 	

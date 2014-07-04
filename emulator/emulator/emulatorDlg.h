@@ -45,6 +45,7 @@ protected:
 	void ClearScreen();
 
 	static UINT receive_Data(LPVOID param);
+	bool write_file(const CString &text);
 
 public:
 	afx_msg void OnBnClickedButton1();
