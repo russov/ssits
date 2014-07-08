@@ -7,13 +7,6 @@
 #include "emulatorDlg.h"
 #include "afxdialogex.h"
 
-/*
-#include <fstream>
-#include <istream>
-#include <iostream>
-*/
-#include <ctime>
-
 #include <regex>
 
 #include <stdio.h>
@@ -62,12 +55,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
-// CemulatorDlg dialog
-
-
-
-
 CemulatorDlg::CemulatorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CemulatorDlg::IDD, pParent)
 {
@@ -89,7 +76,6 @@ BEGIN_MESSAGE_MAP(CemulatorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CemulatorDlg::OnBnClickedButton1)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
-
 
 void CemulatorDlg::OnTimer(UINT_PTR nIDEvent)
 {
@@ -143,23 +129,13 @@ void CemulatorDlg::ClearScreen()
 
 void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 {
+	CString result;
+	result.Format("%d", clock());
+
+	OutputDebugString(result + CString("\n"));
+
 	//ClearScreen();
-	//debag
-/*	{
-		
-		clock_t time1 = clock();
-	CString shift1;
-	//shift.Format("%d", (timediff/speed_dig) *2);
-
-//	CString str;
-	_itot_s( time1, shift1.GetBufferSetLength( 40 ), 40, 10 );
-	shift1.ReleaseBuffer();
-
-	write_file(shift1);
-
-	}*/
-	//
-
+	
 	const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
 
 	std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
@@ -168,9 +144,21 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 	int column = 0;
 
 	RECT dialog_Rect;
-
 	this->GetClientRect(&dialog_Rect);
 
+	CClientDC dc(this);
+
+	if ( !bMemDCEnabled )
+	{
+		b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
+		memDC.CreateCompatibleDC( &dc ) ;
+		bMemDCEnabled = TRUE;
+	}
+
+	memDC.SelectObject( &b );
+
+	CBrush brush ( RGB(255,255,255) );
+	memDC.FillRect( &dialog_Rect, &brush);
 
 	int lenght_Balloon = dialog_Rect.right / count_column;
 	
@@ -184,31 +172,23 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 		std::string f = (*i).str();
 
 		std::tr1::regex_match(f, result, pattern);
-
+		
 		int iRed = atoi(result[1].str().c_str());
 		int iGrn = atoi(result[2].str().c_str());
 		int iBlu = atoi(result[3].str().c_str());
 
 		long lRGB = RGB(iRed, iGrn, iBlu);
 		
-		CClientDC * pDC = new CClientDC(this);	
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		
 		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
-
-		if (column%2 == 0)
-		{
-			current_Y -= lenght_Balloon;
-		} else
-		{
-			current_Y += lenght_Balloon;
-		}
-
-		pDC->SelectObject(hBrush); 
-		pDC->Ellipse(&rect);
 		
-		pDC->SetBkColor(lRGB);
-//		UpdateData(false);
+		if (column%2 == 0)
+			current_Y -= lenght_Balloon;
+		else
+			current_Y += lenght_Balloon;
+			
+		HBRUSH hBrush = CreateSolidBrush(lRGB);
+		memDC.SelectObject(hBrush);
+		memDC.Ellipse(&rect);
 
 		++row;
 		
@@ -218,66 +198,26 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 			current_X += lenght_Balloon;
 
 			if (column%2 == 0)
-			{
 				current_Y += lenght_Balloon + lenght_Balloon / 2;	
-			} else
-			{
+			else
 				current_Y -= lenght_Balloon / 2;
-			}
 			++column;
 		}
+		
 		DeleteObject(hBrush);
-		delete pDC;
 	}
-/*	{
-	clock_t time1 = clock();
-	CString shift1;
-	//shift.Format("%d", (timediff/speed_dig) *2);
 
-//	CString str;
-	_itot_s( time1, shift1.GetBufferSetLength( 40 ), 40, 10 );
-	shift1.ReleaseBuffer();
+	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
+           &memDC,
+           0, 0,
+           SRCCOPY);
 
-	write_file(shift1 + CString("  End"));
-	}*/
-}
-/*
-bool CemulatorDlg::write_file(const CString &text)
-{
-    std::string NameFile("../../emulator/inbox/2.txt");
-    std::ofstream os;
-	os.open(NameFile, std::ios::app);
-    if(!os )
-    {
-        printf("File not found");
-        return(0);
-    }
+	//delete dc;
 
-	CT2CA pszConvertedAnsiString (text);
- 
-    std::string strStd (pszConvertedAnsiString);
+	CString result1;
+	result1.Format("%d", clock());
 
-    os << strStd.substr(0, strStd.size()) << std::endl;
-    os.close();
-
-	return true;
-}
-*/
-void CemulatorDlg::SetBalloon(int red, int grn, int blu)
-{
-	RECT pRect;
-	int iRed = rand()%255;
-	int iGrn = rand()%255;
-	int iBlu = rand()%255;
-	long lRGB = RGB(iRed, iGrn, iBlu);
-	CDC * pDC = m_Edit1.GetDC();
-
-	m_Edit1.GetClientRect(&pRect);
-	HBRUSH hBrush = CreateSolidBrush(lRGB);
-	pDC->SelectObject(hBrush); 
-	pDC->Rectangle(&pRect);
-	pDC->SetBkColor(lRGB);
-	UpdateData(false);			
+	OutputDebugString(result1 + CString("-END") + CString("\n"));
 }
 
 BOOL CemulatorDlg::OnInitDialog()
@@ -311,87 +251,18 @@ BOOL CemulatorDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	{
-		TCHAR pathBuffer[10000] = {0};
-		GetCurrentDirectoryA(10000, pathBuffer);
+	TCHAR pathBuffer[10000] = {0};
+	GetCurrentDirectoryA(10000, pathBuffer);
 		
-		CString path(pathBuffer);
-		path += CString("\\..\\inbox\\1.txt");
-		m_PathDirectory.SetWindowTextA(path);
-
-		// TODO: Add extra validation here
-		
-		/*CRect dialog_Rect;
-
-		this->GetClientRect(&dialog_Rect);
-
-		int current_Y = 0;
-		int current_X = 0;
-
-		int lenght_Balloon = dialog_Rect.right / count_column;
-		
-		for(int i = 0; i < count_row; ++i)
-		{
-			if (i%2)
-				current_Y += lenght_Balloon / 2;
-
-			for (int j = 0; j < count_column; ++j)
-			{
-				if (i%2 && ((j + 1) == count_column))
-					break;
-				
-				CEdit* edit = new CEdit();
-				
-				CRect rect(current_Y,current_X,current_Y + lenght_Balloon, current_X + lenght_Balloon);
-
-				current_Y += lenght_Balloon; 
-				
-				RECT pRect1;
-
-				edit->Create(ES_CENTER | WS_OVERLAPPED | WS_VISIBLE | ES_AUTOHSCROLL, rect, this, 1000);
-				
-				//CPaintDC* pDC=new CPaintDC(this);    
-				
-				//pDC->Rectangle(1,50,100,150);
-				
-				
-				edit->GetRect(&pRect1);
-
-								
-				ClientToScreen(&pRect1);
-
-				edit_Vector.push_back(edit);
-			}
-			current_X += lenght_Balloon;
-			current_Y = 0;
-		}
-		*/
-		//SetTimer(2, 100, 0);
-
-	//	receive_Data();
-			
-		/*RECT pRect;
-		int iRed = rand()%255;
-		int iGrn = rand()%255;
-		int iBlu = rand()%255;
-		long lRGB = RGB(iRed, iGrn, iBlu);
-		CDC * pDC = m_Edit1.GetDC();
-
-		m_Edit1.GetClientRect(&pRect);
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		pDC->SelectObject(hBrush); 
-		pDC->Rectangle(&pRect);
-		pDC->SetBkColor(lRGB);
-		UpdateData(false);*/
-
-	}
+	CString path(pathBuffer);
+	path += CString("\\..\\inbox\\1.txt");
+	m_PathDirectory.SetWindowTextA(path);
+	bMemDCEnabled = FALSE;
 	
-	AfxBeginThread(receive_Data, this, THREAD_PRIORITY_TIME_CRITICAL); //Запуск потока
+	AfxBeginThread(receive_Data, this); //Запуск потока
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
-
-
 
 void CemulatorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -447,8 +318,6 @@ HCURSOR CemulatorDlg::OnQueryDragIcon()
 
 void CemulatorDlg::OnBnClickedButton1()
 {
-	//receive_Data();
-
 	// TODO: Add your control notification handler code here
 	RECT pRect;
 	int iRed = rand()%255;

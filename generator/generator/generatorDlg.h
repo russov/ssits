@@ -9,6 +9,7 @@
 #include <vector> 
 
 #include "../../CommonData.h"
+#include "afxcolorbutton.h"
 
 // CgeneratorDlg dialog
 class CgeneratorDlg : public CDialogEx
@@ -58,4 +59,6 @@ public:
 	CEdit m_Not_Found_Symbols;
 	CButton m_Stop;
 	afx_msg void OnBnClickedButton3();
+	CMFCColorButton m_Background_Color;
+	CMFCColorButton m_Symbols_Color;
 };

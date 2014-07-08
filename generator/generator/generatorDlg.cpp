@@ -80,6 +80,8 @@ void CgeneratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, m_Shift);
 	DDX_Control(pDX, IDC_EDIT3, m_Not_Found_Symbols);
 	DDX_Control(pDX, IDC_BUTTON3, m_Stop);
+	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, m_Background_Color);
+	DDX_Control(pDX, IDC_MFCCOLORBUTTON2, m_Symbols_Color);
 }
 
 BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
@@ -207,8 +209,8 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	/*CString shift1;
 	//shift.Format("%d", (timediff/speed_dig) *2);
-
-//	CString str;
+	
+	CString str;
 	_itot_s( timediff, shift1.GetBufferSetLength( 40 ), 40, 10 );
 	shift1.ReleaseBuffer();
 
@@ -303,6 +305,8 @@ void CgeneratorDlg::create_Image(int shift)
 {
 	CString backGroundColor = CString("RGB(0,0,0)");
 	CString symbolColor = CString("RGB(255,255,255)");
+
+	COLORREF g = m_Background_Color.GetColor();
 
 	for (int j = 0; j < count_column; j+=2)
 	{

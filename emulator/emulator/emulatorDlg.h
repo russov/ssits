@@ -21,7 +21,6 @@ public:
 	enum { IDD = IDD_EMULATOR_DIALOG };
 
 	void SetColorBallons(const CString &sequence);
-	void SetBalloon(int red, int grn, int blu);
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -46,6 +45,10 @@ protected:
 
 	static UINT receive_Data(LPVOID param);
 	bool write_file(const CString &text);
+
+	bool bMemDCEnabled;
+	CDC memDC;
+	CBitmap b;
 
 public:
 	afx_msg void OnBnClickedButton1();
