@@ -306,8 +306,6 @@ void CgeneratorDlg::create_Image(int shift)
 	CString backGroundColor = CString("RGB(0,0,0)");
 	CString symbolColor = CString("RGB(255,255,255)");
 
-	COLORREF g = m_Background_Color.GetColor();
-
 	for (int j = 0; j < count_column; j+=2)
 	{
 		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
@@ -328,11 +326,47 @@ void CgeneratorDlg::create_Image(int shift)
 	}
 }
 
+void CgeneratorDlg::COLORREF2string(COLORREF cr, char* buffer) 
+{
+    itoa(cr, buffer, 16);
+	/*
+    buffer += strlen(buffer);
+    *buffer = ' ';
+    itoa(GetBValue(cr), buffer + 1, 10);
+
+    buffer += strlen(buffer);
+    *buffer = ' ';
+    itoa(GetGValue(cr), buffer + 1, 10);*/
+}
+
 CString CgeneratorDlg::create_Image_To_Send(int shift)
 {
 	CString backGroundColor = CString("RGB(0,0,0)");
 	CString symbolColor = CString("RGB(255,255,255)");
 
+	COLORREF g = m_Background_Color.GetColor();
+
+	char f[16] = {0}; 
+
+	 unsigned char h[16];
+
+	COLORREF2string(g, f);
+
+	size_t str_len = strlen(f);
+
+	memset(h, 0x00, sizeof(h));
+
+
+	for (int i = 0; i < ((str_len / 2)-1); i++) {
+        sscanf(f + 2*i, "%02x", &h[i]);
+		}
+	//memset(h, (int)f, sizeof(h));
+
+
+	//unsigned char h[16] = (unsigned char*)f;
+
+	//strcpy(f, g);
+	
 	CString result;
 
 	for (int j = 0; j < count_column; j+=2)
