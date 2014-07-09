@@ -24,8 +24,6 @@ public:
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-	
-	//void OnTimer(UINT nIDEvent);
 
 // Implementation
 protected:
@@ -37,20 +35,17 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-
-
-	std::vector<CEdit *> edit_Vector;
-
+	
 	void ClearScreen();
-
 	static UINT receive_Data(LPVOID param);
 	bool write_file(const CString &text);
 
+	std::vector<CEdit *> edit_Vector;
 	bool bMemDCEnabled;
 	CDC memDC;
 	CBitmap b;
 
-public:
+protected:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	

@@ -7,15 +7,12 @@
 #include "emulatorDlg.h"
 #include "afxdialogex.h"
 
-#include <regex>
-
 #include <stdio.h>
 #include <winsock2.h>
 
 #include "../../CommonData.h"
 
 #define PORT 666    // порт сервера
-#define sHELLO "Hello, %s [%s] Sailor\n"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,7 +20,6 @@
 
 #define count_column 27
 #define count_row 17
-
 
 // CAboutDlg dialog used for App About
 
@@ -105,22 +101,15 @@ void CemulatorDlg::ClearScreen()
 	CClientDC * pDC = new CClientDC(this);
 	
 	long lRGB = RGB(255, 255, 255);
-
 	HBRUSH hBrush = CreateSolidBrush(lRGB);
-	
-
 	pDC->SelectObject(hBrush); 
 	
 	RECT rect;
-
 	this->GetClientRect(&rect);
-
 	pDC->Rectangle(&rect);
-
 			
 	pDC->SetBkColor(lRGB);
 	UpdateData(false);
-
 
 	DeleteObject(hBrush);
 
@@ -131,14 +120,7 @@ void CemulatorDlg::SetColorBallons(const unsigned char *sequenceIn)
 {
 	CString result;
 	result.Format("%d", clock());
-
 	OutputDebugString(result + CString("\n"));
-
-	//ClearScreen();
-	
-	//const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
-
-	//std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
  
 	int row = 0;
 	int column = 0;
@@ -161,23 +143,11 @@ void CemulatorDlg::SetColorBallons(const unsigned char *sequenceIn)
 	memDC.FillRect( &dialog_Rect, &brush);
 
 	int lenght_Balloon = dialog_Rect.right / count_column;
-	
 	int current_Y = dialog_Rect.bottom  - lenght_Balloon - lenght_Balloon;
 	int current_X = dialog_Rect.left;
 
-	//const std::tr1::sregex_token_iterator end;
-	//for (std::tr1::sregex_token_iterator i(sequence.begin(), sequence.end(), pattern); i != end; ++i)
 	for (int i = 0; i < 1338; i += 3)
 	{
-		/*std::tr1::match_results<std::string::const_iterator> result;
-		std::string f = (*i).str();
-
-		std::tr1::regex_match(f, result, pattern);
-		*/
-	/*	int iRed = atoi(result[1].str().c_str());
-		int iGrn = atoi(result[2].str().c_str());
-		int iBlu = atoi(result[3].str().c_str());
-		*/
 		long lRGB = RGB(sequenceIn[i], sequenceIn[i+1], sequenceIn[i+2]);
 		
 		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
@@ -204,16 +174,12 @@ void CemulatorDlg::SetColorBallons(const unsigned char *sequenceIn)
 				current_Y -= lenght_Balloon / 2;
 			++column;
 		}
-		
 		DeleteObject(hBrush);
 	}
-
 	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
            &memDC,
            0, 0,
            SRCCOPY);
-
-	//delete dc;
 
 	CString result1;
 	result1.Format("%d", clock());
@@ -262,7 +228,7 @@ BOOL CemulatorDlg::OnInitDialog()
 	
 	AfxBeginThread(receive_Data, this); //Запуск потока
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE;
 }
 
 void CemulatorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -336,13 +302,9 @@ void CemulatorDlg::OnBnClickedButton1()
 	
 	for (unsigned int i = 0; i < edit_Vector.size(); ++i)
 	{
-		CEdit *edit = edit_Vector[i];
-
 		RECT rect;
-
+		CEdit *edit = edit_Vector[i];
 		edit->GetClientRect(&rect);
-
-		int h = 0;
 	}
 }
 
@@ -424,7 +386,6 @@ UINT CemulatorDlg::receive_Data(LPVOID param)
       // посылка датаграммы клиенту
       sendto(my_sock,&buff[0],bsize,0,
         (sockaddr *)&client_addr, sizeof(client_addr));*/
-	  int y = 0;
     }
     return 0;
 }

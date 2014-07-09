@@ -24,7 +24,6 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -41,25 +40,26 @@ protected:
 	void add_Blank_Screen_End();
 	void fill_Useful_Data_Screen();
 	void create_Image(int shift = 0);
-	void COLORREF2string(COLORREF cr, char* buffer);
-	CString create_Image_To_Send(unsigned char *sequence, int shift = 0);
+	void create_Image_To_Send(unsigned char *sequence, int shift = 0);
 	BOOL send_DataUDP(struct send_Data data);
 
 	std::vector <std::string> m_Storage_Screen_Point;
 	int current_Size_Screen;
 
-public:
+protected:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnEnChangeEdit1();
 
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButton2();
-	
+	afx_msg void OnBnClickedButton3();
+
 	CEdit m_Speed;
 	CEdit m_Shift;
 	CEdit m_Not_Found_Symbols;
 	CButton m_Stop;
-	afx_msg void OnBnClickedButton3();
+	
 	CMFCColorButton m_Background_Color;
 	CMFCColorButton m_Symbols_Color;
+	CEdit m_Incoming_Sequence;
 };

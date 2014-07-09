@@ -61,12 +61,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
-// CgeneratorDlg dialog
-
-
-
-
 CgeneratorDlg::CgeneratorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CgeneratorDlg::IDD, pParent)
 {
@@ -82,6 +76,7 @@ void CgeneratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON3, m_Stop);
 	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, m_Background_Color);
 	DDX_Control(pDX, IDC_MFCCOLORBUTTON2, m_Symbols_Color);
+	DDX_Control(pDX, IDC_INCOMING_SEQUENCE, m_Incoming_Sequence);
 }
 
 BEGIN_MESSAGE_MAP(CgeneratorDlg, CDialogEx)
@@ -129,8 +124,10 @@ BOOL CgeneratorDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	m_Speed.SetWindowTextW(CString("200"));
+	m_Speed.SetWindowTextW(CString("70"));
 	m_Shift.SetWindowTextW(CString("0"));
+	m_Incoming_Sequence.SetWindowTextW(CString("1A1A1A11AA"));
+	m_Background_Color.SetColor(RGB(255,255,255));
 	m_Not_Found_Symbols.ShowWindow(FALSE);
 	m_Not_Found_Symbols.SetWindowTextW(CString("Not found directory with symbols"));
 
@@ -206,23 +203,7 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	send_Data data;
-	CString g = create_Image_To_Send(data.sequence_frame, (shift) *2);
-
-	/*CString shift1;
-	//shift.Format("%d", (timediff/speed_dig) *2);
-	
-	CString str;
-	_itot_s( timediff, shift1.GetBufferSetLength( 40 ), 40, 10 );
-	shift1.ReleaseBuffer();
-
-	write_file(shift1);
-	*/
-
-	//send_Data data;
-	//sprintf(data.sequence_frame, "%S", g);
-	
-	//LPBYTE pByte = new BYTE[g.GetLength() + 1];
-	//memcpy(data.sequence_frame, (VOID*)LPCTSTR(g), g.GetLength());
+	create_Image_To_Send(data.sequence_frame, (shift) *2);
 
 	send_DataUDP(data);
 	
@@ -257,23 +238,25 @@ void CgeneratorDlg::add_Blank_Screen_End()
 
 void CgeneratorDlg::fill_Useful_Data_Screen()
 {
-	std::string incoming_Sequence = "11AAA11A1A1A";
+	CString incoming_Sequence;
 
-	for (int i = 0; i < incoming_Sequence.size(); ++i)
+	m_Incoming_Sequence.GetWindowTextW(incoming_Sequence);
+
+	for (int i = 0; i < incoming_Sequence.GetLength(); ++i)
 	{
 		std::ifstream in;
-		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
+		CString h = CString(CString("..\\symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt"));
+		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt")));
 		
 		if (!in.good())
 		{
-			in.open(CString(CString("symbols\\") + CString(incoming_Sequence[i]) + CString(".txt")));
+			in.open(CString(CString("symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt")));
 			if (!in.good())
 			{
 				m_Not_Found_Symbols.ShowWindow(TRUE);
 				break;
 			}
 		}
-
 		m_Not_Found_Symbols.ShowWindow(FALSE);
 
 		char row[256] = {0};
@@ -331,20 +314,7 @@ void CgeneratorDlg::create_Image(int shift)
 	}
 }
 
-void CgeneratorDlg::COLORREF2string(COLORREF cr, char* buffer) 
-{
-    itoa(cr, buffer, 16);
-	/*
-    buffer += strlen(buffer);
-    *buffer = ' ';
-    itoa(GetBValue(cr), buffer + 1, 10);
-
-    buffer += strlen(buffer);
-    *buffer = ' ';
-    itoa(GetGValue(cr), buffer + 1, 10);*/
-}
-
-CString CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
+void CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
 {
 	COLORREF g = m_Background_Color.GetColor();
 	unsigned char background_Color[3];
@@ -357,42 +327,6 @@ CString CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
 	symbols_Color[0] = GetRValue(g1);
 	symbols_Color[1] = GetGValue(g1);
 	symbols_Color[2] = GetBValue(g1);
-
-	//CString backGroundColor = CString(background_Color);
-	//CString symbolColor = CString("RGB(255,255,255)");
-
-	//unsigned char str[80]={0};
-
-	//_mbscat(str, symbols_Color);
-	//_mbscat(str, background_Color);
-
-	//strncat(str, &backGroundColor, 3);
-
-	//CString backGroundColor = CString("RGB(0,0,0)");
-	//CString symbolColor = CString("RGB(255,255,255)");
-
-	//COLORREF g = m_Background_Color.GetColor();
-
-	/*char f[16] = {0}; 
-
-	 unsigned char h[16];
-
-	COLORREF2string(g, f);
-
-	size_t str_len = strlen(f);
-
-	memset(h, 0x00, sizeof(h));
-
-
-	for (int i = 0; i < ((str_len / 2)-1); i++) {
-        sscanf(f + 2*i, "%02x", &h[i]);
-		}*/
-	//memset(h, (int)f, sizeof(h));
-
-
-	//unsigned char h[16] = (unsigned char*)f;
-
-	//strcpy(f, g);
 	
 	CString result;
 	int position_Item = 0;
@@ -404,10 +338,12 @@ CString CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
 			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 			if (symbol == '0' || symbol == '1')
 			{
-				_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+				//_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+				sequence[position_Item * 3] = symbol == '1' ? symbols_Color[0] : background_Color[0];	
+				sequence[position_Item * 3 + 1] = symbol == '1' ? symbols_Color[1] : background_Color[1];
+				sequence[position_Item * 3 + 2] = symbol == '1' ? symbols_Color[2] : background_Color[2];
+
 				++position_Item;
-				//str[position_Item] = 
-				//result += symbol == '1' ? symbolColor : backGroundColor;
 			}
 		}
 		if (j < (count_column-2))
@@ -417,15 +353,16 @@ CString CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
 				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 				if (symbol == '0' || symbol == '1')
 				{
-					_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+					//_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+					sequence[position_Item * 3] = symbol == '1' ? symbols_Color[0] : background_Color[0];	
+					sequence[position_Item * 3 + 1] = symbol == '1' ? symbols_Color[1] : background_Color[1];
+					sequence[position_Item * 3 + 2] = symbol == '1' ? symbols_Color[2] : background_Color[2];
+
 					++position_Item;
-					//result += symbol == '1' ? symbolColor : backGroundColor;
 				}
 			}
 		}
 	}
-
-	return result;
 }
 
 void CgeneratorDlg::OnBnClickedButton1()
@@ -442,14 +379,7 @@ void CgeneratorDlg::OnBnClickedButton1()
 	CString shift;
 	m_Shift.GetWindowTextW(shift);
 
-	//const char* cstr = (LPCTSTR)shift;
-	//atoi((char*)(LPCTSTR)shift);
-
 	create_Image(atoi((char*)(LPCTSTR)shift));
-
-	//send_Data data;
-
-	//send_DataUDP(data);
 }
 
 bool CgeneratorDlg::write_file(const CString &text)
@@ -587,5 +517,4 @@ BOOL CgeneratorDlg::send_DataUDP(struct send_Data data)
 void CgeneratorDlg::OnBnClickedButton3()
 {
 	KillTimer(IdEventTimer);
-	// TODO: Add your control notification handler code here
 }
