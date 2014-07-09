@@ -20,7 +20,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_EMULATOR_DIALOG };
 
-	void SetColorBallons(const CString &sequence);
+	void SetColorBallons(const unsigned char *sequence);
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support

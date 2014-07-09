@@ -42,7 +42,7 @@ protected:
 	void fill_Useful_Data_Screen();
 	void create_Image(int shift = 0);
 	void COLORREF2string(COLORREF cr, char* buffer);
-	CString create_Image_To_Send(int shift = 0);
+	CString create_Image_To_Send(unsigned char *sequence, int shift = 0);
 	BOOL send_DataUDP(struct send_Data data);
 
 	std::vector <std::string> m_Storage_Screen_Point;

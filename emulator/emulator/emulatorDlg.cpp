@@ -94,7 +94,7 @@ void CemulatorDlg::OnTimer(UINT_PTR nIDEvent)
 	    nActual = myFile.Read(szBuffer, sizeof(szBuffer)); 
 		myFile.Close();		
 
-		SetColorBallons(CString(szBuffer));
+		//SetColorBallons(CString(szBuffer));
 	}
 	
 	CDialogEx::OnTimer(nIDEvent);
@@ -127,7 +127,7 @@ void CemulatorDlg::ClearScreen()
 	delete pDC;
 }
 
-void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
+void CemulatorDlg::SetColorBallons(const unsigned char *sequenceIn)
 {
 	CString result;
 	result.Format("%d", clock());
@@ -136,9 +136,9 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 
 	//ClearScreen();
 	
-	const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
+	//const std::tr1::regex pattern("RGB\\((\\d+),(\\d+),(\\d+)\\)");
 
-	std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
+	//std::string sequence = (LPCTSTR)sequenceIn;  //"RGB(100,100,100)RGB(10,10,130)";
  
 	int row = 0;
 	int column = 0;
@@ -165,19 +165,20 @@ void CemulatorDlg::SetColorBallons(const CString &sequenceIn)
 	int current_Y = dialog_Rect.bottom  - lenght_Balloon - lenght_Balloon;
 	int current_X = dialog_Rect.left;
 
-	const std::tr1::sregex_token_iterator end;
-	for (std::tr1::sregex_token_iterator i(sequence.begin(), sequence.end(), pattern); i != end; ++i)
+	//const std::tr1::sregex_token_iterator end;
+	//for (std::tr1::sregex_token_iterator i(sequence.begin(), sequence.end(), pattern); i != end; ++i)
+	for (int i = 0; i < 1338; i += 3)
 	{
-		std::tr1::match_results<std::string::const_iterator> result;
+		/*std::tr1::match_results<std::string::const_iterator> result;
 		std::string f = (*i).str();
 
 		std::tr1::regex_match(f, result, pattern);
-		
-		int iRed = atoi(result[1].str().c_str());
+		*/
+	/*	int iRed = atoi(result[1].str().c_str());
 		int iGrn = atoi(result[2].str().c_str());
 		int iBlu = atoi(result[3].str().c_str());
-
-		long lRGB = RGB(iRed, iGrn, iBlu);
+		*/
+		long lRGB = RGB(sequenceIn[i], sequenceIn[i+1], sequenceIn[i+2]);
 		
 		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
 		
@@ -396,7 +397,7 @@ UINT CemulatorDlg::receive_Data(LPVOID param)
 		printf("recvfrom() error: %d\n", WSAGetLastError());
 	  
 	  CemulatorDlg* dlg = (CemulatorDlg*)param;
-	  dlg->SetColorBallons(CString(data.sequence_frame));
+	  dlg->SetColorBallons(data.sequence_frame);
 
 	  /*
 	  if (data.sequence_frame == 'A')

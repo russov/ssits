@@ -205,7 +205,8 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 		time1 += timediff%speed_dig;
 	}
 
-	CString g = create_Image_To_Send((shift) *2);
+	send_Data data;
+	CString g = create_Image_To_Send(data.sequence_frame, (shift) *2);
 
 	/*CString shift1;
 	//shift.Format("%d", (timediff/speed_dig) *2);
@@ -216,9 +217,13 @@ void CgeneratorDlg::OnTimer(UINT_PTR nIDEvent)
 
 	write_file(shift1);
 	*/
-	send_Data data;
-	sprintf(data.sequence_frame, "%S", g);
+
+	//send_Data data;
+	//sprintf(data.sequence_frame, "%S", g);
 	
+	//LPBYTE pByte = new BYTE[g.GetLength() + 1];
+	//memcpy(data.sequence_frame, (VOID*)LPCTSTR(g), g.GetLength());
+
 	send_DataUDP(data);
 	
 	CDialogEx::OnTimer(nIDEvent);
@@ -339,14 +344,36 @@ void CgeneratorDlg::COLORREF2string(COLORREF cr, char* buffer)
     itoa(GetGValue(cr), buffer + 1, 10);*/
 }
 
-CString CgeneratorDlg::create_Image_To_Send(int shift)
+CString CgeneratorDlg::create_Image_To_Send(unsigned char *sequence, int shift)
 {
-	CString backGroundColor = CString("RGB(0,0,0)");
-	CString symbolColor = CString("RGB(255,255,255)");
-
 	COLORREF g = m_Background_Color.GetColor();
+	unsigned char background_Color[3];
+	background_Color[0] = GetRValue(g);
+	background_Color[1] = GetGValue(g);
+	background_Color[2] = GetBValue(g);
 
-	char f[16] = {0}; 
+	COLORREF g1 = m_Symbols_Color.GetColor();
+	unsigned char symbols_Color[3];
+	symbols_Color[0] = GetRValue(g1);
+	symbols_Color[1] = GetGValue(g1);
+	symbols_Color[2] = GetBValue(g1);
+
+	//CString backGroundColor = CString(background_Color);
+	//CString symbolColor = CString("RGB(255,255,255)");
+
+	//unsigned char str[80]={0};
+
+	//_mbscat(str, symbols_Color);
+	//_mbscat(str, background_Color);
+
+	//strncat(str, &backGroundColor, 3);
+
+	//CString backGroundColor = CString("RGB(0,0,0)");
+	//CString symbolColor = CString("RGB(255,255,255)");
+
+	//COLORREF g = m_Background_Color.GetColor();
+
+	/*char f[16] = {0}; 
 
 	 unsigned char h[16];
 
@@ -359,7 +386,7 @@ CString CgeneratorDlg::create_Image_To_Send(int shift)
 
 	for (int i = 0; i < ((str_len / 2)-1); i++) {
         sscanf(f + 2*i, "%02x", &h[i]);
-		}
+		}*/
 	//memset(h, (int)f, sizeof(h));
 
 
@@ -368,6 +395,7 @@ CString CgeneratorDlg::create_Image_To_Send(int shift)
 	//strcpy(f, g);
 	
 	CString result;
+	int position_Item = 0;
 
 	for (int j = 0; j < count_column; j+=2)
 	{
@@ -375,7 +403,12 @@ CString CgeneratorDlg::create_Image_To_Send(int shift)
 		{
 			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 			if (symbol == '0' || symbol == '1')
-				result += symbol == '1' ? symbolColor : backGroundColor;
+			{
+				_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+				++position_Item;
+				//str[position_Item] = 
+				//result += symbol == '1' ? symbolColor : backGroundColor;
+			}
 		}
 		if (j < (count_column-2))
 		{
@@ -383,7 +416,11 @@ CString CgeneratorDlg::create_Image_To_Send(int shift)
 			{
 				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
 				if (symbol == '0' || symbol == '1')
-					result += symbol == '1' ? symbolColor : backGroundColor;
+				{
+					_mbscpy(sequence + position_Item * 3, symbol == '1' ? symbols_Color : background_Color);
+					++position_Item;
+					//result += symbol == '1' ? symbolColor : backGroundColor;
+				}
 			}
 		}
 	}
