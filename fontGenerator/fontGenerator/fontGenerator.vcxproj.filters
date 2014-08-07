@@ -22,6 +22,7 @@
     <None Include="res\fontGenerator.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fontGenerator.h">

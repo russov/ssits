@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 
 // CfontGeneratorDlg dialog
@@ -37,5 +38,6 @@ protected:
 	void SetColorBallons(const unsigned char *sequenceIn);
 public:
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	CEdit m_Edit;
 };

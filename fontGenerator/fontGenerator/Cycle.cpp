@@ -2,9 +2,8 @@
 #include "Cycle.h"
 
 
-
-
 Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClientDC& dc, const RECT& dialog_Rect)
+	: CWnd()
 {
 	long lRGB = RGB(0, 0, 0);
 		
@@ -65,4 +64,22 @@ Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClie
 
 Cycle::~Cycle(void)
 {
+}
+
+BEGIN_MESSAGE_MAP(Cycle, CStatic)
+	ON_WM_LBUTTONDBLCLK()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONDOWN()
+END_MESSAGE_MAP()
+
+
+
+
+
+
+void Cycle::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	CWnd::OnLButtonDown(nFlags, point);
 }

@@ -66,6 +66,8 @@ CfontGeneratorDlg::CfontGeneratorDlg(CWnd* pParent /*=NULL*/)
 void CfontGeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_Edit);
+	DDX_Control(pDX, ;
 }
 
 BEGIN_MESSAGE_MAP(CfontGeneratorDlg, CDialogEx)
@@ -74,6 +76,7 @@ BEGIN_MESSAGE_MAP(CfontGeneratorDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CfontGeneratorDlg::OnBnClickedOk)
 	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 
@@ -263,8 +266,12 @@ void CfontGeneratorDlg::OnBnClickedOk()
 }
 
 
-void CfontGeneratorDlg::OnLButtonUp(UINT nFlags, CPoint point)
+
+
+
+void CfontGeneratorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
-	CDialogEx::OnLButtonUp(nFlags, point);
+
+	CDialogEx::OnLButtonDown(nFlags, point);
 }
