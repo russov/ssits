@@ -67,7 +67,7 @@ void CfontGeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_Edit);
-	DDX_Control(pDX, ;
+//	DDX_Control(pDX, ;
 }
 
 BEGIN_MESSAGE_MAP(CfontGeneratorDlg, CDialogEx)
@@ -248,16 +248,17 @@ void CfontGeneratorDlg::OnBnClickedOk()
 	CClientDC dc(this);
 
 	b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
-		memDC.CreateCompatibleDC( &dc ) ;
-		//bMemDCEnabled = TRUE;
+	memDC.CreateCompatibleDC( &dc ) ;
+	
+	//bMemDCEnabled = TRUE;
 	
 
 	memDC.SelectObject( &b );
 
-	CBrush brush ( RGB(255,255,255) );
-	memDC.FillRect( &dialog_Rect, &brush);
+	//CBrush brush ( RGB(255,255,255) );
+	//memDC.FillRect( &dialog_Rect, &brush);
 
-	Cycle *cycle = new Cycle(0,25,50,memDC,dc,dialog_Rect);
+	Cycle *cycle = new Cycle(0,25,50,memDC,dc,dialog_Rect, this);
 
 
 

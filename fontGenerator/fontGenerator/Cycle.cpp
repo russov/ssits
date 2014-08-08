@@ -2,21 +2,22 @@
 #include "Cycle.h"
 
 
-Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClientDC& dc, const RECT& dialog_Rect)
-	: CWnd()
+Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClientDC& dc, const RECT& dialog_Rect, CWnd *parent)
+	: CStatic()
 {
-	long lRGB = RGB(0, 0, 0);
+	long lRGB = RGB(0, 255, 0);
 		
 		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
 		
+		CStatic::Create("", WS_CHILD|WS_VISIBLE|SS_NOTIFY, *rect, parent, 1235);
+
+		//this->ShowWindow(SW_HIDE);
+
 		/*if (column%2 == 0)
 			current_Y -= lenght_Balloon;
 		else
 			current_Y += lenght_Balloon;
 			*/
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		memDC.SelectObject(hBrush);
-		memDC.Ellipse(&rect);
 
 		//++row;
 		
@@ -31,7 +32,33 @@ Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClie
 				current_Y -= lenght_Balloon / 2;
 			++column;
 		}*/
-		DeleteObject(hBrush);
+		
+
+		/*CDC memDC;
+		
+			
+			CClientDC dc(parent);
+			CBitmap b;
+			b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
+			memDC.CreateCompatibleDC( &dc ) ;
+	
+			//bMemDCEnabled = TRUE;
+	
+
+			memDC.SelectObject( &b );
+
+			*/
+			HBRUSH hBrush = CreateSolidBrush(lRGB);
+			memDC.SelectObject(hBrush);
+			memDC.Ellipse(&rect);
+
+			DeleteObject(hBrush);
+
+			//CBrush brush ( RGB(255,255,255) );
+			//memDC.FillRect( &dialog_Rect, &brush);
+
+		
+
 	
 	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
            &memDC,
@@ -39,10 +66,15 @@ Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClie
            SRCCOPY);
 
 
-	MSG msg;
-	BOOL bRet;
+	
 
-	while( (bRet = GetMessage( &msg, NULL, 0, 0 )) != 0)
+	//ModifyStyle(0,SS_NOTIFY,0);
+
+
+	//MSG msg;
+//	BOOL bRet;
+
+	/*while( (bRet = GetMessage( &msg, NULL, 0, 0 )) != 0)
 	{ 
 		if (bRet == -1)
 		{
@@ -57,7 +89,7 @@ Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClie
 			TranslateMessage(&msg); 
 			DispatchMessage(&msg); 
 		}
-	}
+	}*/
 
 }
 
@@ -67,8 +99,6 @@ Cycle::~Cycle(void)
 }
 
 BEGIN_MESSAGE_MAP(Cycle, CStatic)
-	ON_WM_LBUTTONDBLCLK()
-	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
