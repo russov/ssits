@@ -4,12 +4,12 @@
 
 #pragma once
 #include "afxwin.h"
+#include "vector"
 
+#include "Cycle.h"
 
-// CfontGeneratorDlg dialog
 class CfontGeneratorDlg : public CDialogEx
 {
-// Construction
 public:
 	CfontGeneratorDlg(CWnd* pParent = NULL);	// standard constructor
 
@@ -19,25 +19,26 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
-// Implementation
 protected:
 	HICON m_hIcon;
 
-	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+
 	DECLARE_MESSAGE_MAP()
 
 	bool bMemDCEnabled;
 	CDC memDC;
 	CBitmap b;
 
-	void SetColorBallons(const unsigned char *sequenceIn);
+	std::vector <Cycle *> cycleVec;
+		
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	CEdit m_Edit;
+
+	afx_msg void OnBnClickedButtonSave();
+	afx_msg void OnBnClickedButtonClear();
 };

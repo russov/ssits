@@ -2,95 +2,17 @@
 #include "Cycle.h"
 
 
-Cycle::Cycle(int current_X, int current_Y, int lenght_Balloon, CDC& memDC, CClientDC& dc, const RECT& dialog_Rect, CWnd *parent)
-	: CStatic()
+Cycle::Cycle(int current_X, int current_Y, int lenght, CWnd *parent)
+	: CStatic(), lenghtBalloon(lenght)
 {
-	long lRGB = RGB(0, 255, 0);
-		
-		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
-		
-		CStatic::Create("", WS_CHILD|WS_VISIBLE|SS_NOTIFY, *rect, parent, 1235);
-
-		//this->ShowWindow(SW_HIDE);
-
-		/*if (column%2 == 0)
-			current_Y -= lenght_Balloon;
-		else
-			current_Y += lenght_Balloon;
-			*/
-
-		//++row;
-		
-		/*if (row >= count_row || (column%2 && (row+1) == count_row))
-		{			
-			row = 0;
-			current_X += lenght_Balloon;
-
-			if (column%2 == 0)
-				current_Y += lenght_Balloon + lenght_Balloon / 2;	
-			else
-				current_Y -= lenght_Balloon / 2;
-			++column;
-		}*/
-		
-
-		/*CDC memDC;
-		
-			
-			CClientDC dc(parent);
-			CBitmap b;
-			b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
-			memDC.CreateCompatibleDC( &dc ) ;
+	CRect rect(current_X, current_Y, current_X + lenghtBalloon, current_Y + lenghtBalloon);
 	
-			//bMemDCEnabled = TRUE;
-	
+	CStatic::Create("", WS_CHILD|WS_VISIBLE|SS_NOTIFY, *rect, parent, 1235);
 
-			memDC.SelectObject( &b );
+	lRGBMas[0] = RGB(0, 255, 0);
+	lRGBMas[1] = RGB(0, 0, 0);
 
-			*/
-			HBRUSH hBrush = CreateSolidBrush(lRGB);
-			memDC.SelectObject(hBrush);
-			memDC.Ellipse(&rect);
-
-			DeleteObject(hBrush);
-
-			//CBrush brush ( RGB(255,255,255) );
-			//memDC.FillRect( &dialog_Rect, &brush);
-
-		
-
-	
-	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
-           &memDC,
-           0, 0,
-           SRCCOPY);
-
-
-	
-
-	//ModifyStyle(0,SS_NOTIFY,0);
-
-
-	//MSG msg;
-//	BOOL bRet;
-
-	/*while( (bRet = GetMessage( &msg, NULL, 0, 0 )) != 0)
-	{ 
-		if (bRet == -1)
-		{
-			// обработка ошибки и возможный выход из программы
-		}
-		else
-		{
-			if (msg.message == 5)
-			{
-				int y = 0;
-			}
-			TranslateMessage(&msg); 
-			DispatchMessage(&msg); 
-		}
-	}*/
-
+	lRGB = lRGBMas[0];
 }
 
 
@@ -98,18 +20,52 @@ Cycle::~Cycle(void)
 {
 }
 
+long Cycle::GetCurrentRGB()
+{
+	return lRGB;
+}
+
 BEGIN_MESSAGE_MAP(Cycle, CStatic)
 	ON_WM_LBUTTONDOWN()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
-
-
-
-
-
 
 void Cycle::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: Add your message handler code here and/or call default
+	static int numRGB = 0;
+
+	lRGB = lRGBMas[(++numRGB)%2];
 
 	CWnd::OnLButtonDown(nFlags, point);
+	Invalidate();
+}
+
+void Cycle::OnPaint()
+{
+	CPaintDC dc(this); 
+		
+	CDC memDC;
+	
+	RECT dialog_Rect;
+	this->GetClientRect(&dialog_Rect);
+
+	CBitmap b;
+
+	b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
+	memDC.CreateCompatibleDC( &dc ) ;
+	
+	memDC.SelectObject( &b );
+
+	CRect rect(0, 0, 0 + lenghtBalloon, 0 + lenghtBalloon);	
+
+	HBRUSH hBrush = CreateSolidBrush(lRGB);
+	memDC.SelectObject(hBrush);
+	memDC.Ellipse(&rect);
+
+	DeleteObject(hBrush);
+	
+	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
+           &memDC,
+           0, 0,
+           SRCCOPY);
 }

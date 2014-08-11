@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "fontGenerator.h"
 #include "fontGeneratorDlg.h"
-#include "Cycle.h"
 #include "afxdialogex.h"
 
 #include <stdio.h>
@@ -66,7 +65,6 @@ CfontGeneratorDlg::CfontGeneratorDlg(CWnd* pParent /*=NULL*/)
 void CfontGeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT1, m_Edit);
 //	DDX_Control(pDX, ;
 }
 
@@ -77,6 +75,8 @@ BEGIN_MESSAGE_MAP(CfontGeneratorDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CfontGeneratorDlg::OnBnClickedOk)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CfontGeneratorDlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CfontGeneratorDlg::OnBnClickedButtonClear)
 END_MESSAGE_MAP()
 
 
@@ -114,7 +114,7 @@ BOOL CfontGeneratorDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	bMemDCEnabled = FALSE;
-	
+		
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -167,24 +167,17 @@ HCURSOR CfontGeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CfontGeneratorDlg::SetColorBallons(const unsigned char *sequenceIn)
+void CfontGeneratorDlg::OnBnClickedOk()
 {
-	CString result;
-	result.Format("%d", clock());
-	OutputDebugString(result + CString("\n"));
- 
-	int row = 0;
-	int column = 0;
-
 	RECT dialog_Rect;
 	this->GetClientRect(&dialog_Rect);
 
 	CClientDC dc(this);
 
-	if ( !bMemDCEnabled )
+	if (!bMemDCEnabled)
 	{
-		b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
-		memDC.CreateCompatibleDC( &dc ) ;
+		b.CreateCompatibleBitmap(&dc, dialog_Rect.right, dialog_Rect.bottom);
+		memDC.CreateCompatibleDC(&dc) ;
 		bMemDCEnabled = TRUE;
 	}
 
@@ -193,25 +186,22 @@ void CfontGeneratorDlg::SetColorBallons(const unsigned char *sequenceIn)
 	CBrush brush ( RGB(255,255,255) );
 	memDC.FillRect( &dialog_Rect, &brush);
 
+	int row = 0;
+	int column = 0;
 	int lenght_Balloon = dialog_Rect.right / count_column;
 	int current_Y = dialog_Rect.bottom  - lenght_Balloon - lenght_Balloon;
 	int current_X = dialog_Rect.left;
+	Cycle *cycle;
 
 	for (int i = 0; i < 1338; i += 3)
-	{
-		long lRGB = RGB(sequenceIn[i], sequenceIn[i+1], sequenceIn[i+2]);
-		
-		CRect rect(current_X, current_Y, current_X + lenght_Balloon, current_Y + lenght_Balloon);
-		
+	{		
+		cycleVec.push_back(new Cycle(current_X,current_Y,lenght_Balloon, this));
+
 		if (column%2 == 0)
 			current_Y -= lenght_Balloon;
 		else
 			current_Y += lenght_Balloon;
-			
-		HBRUSH hBrush = CreateSolidBrush(lRGB);
-		memDC.SelectObject(hBrush);
-		memDC.Ellipse(&rect);
-
+		
 		++row;
 		
 		if (row >= count_row || (column%2 && (row+1) == count_row))
@@ -225,54 +215,22 @@ void CfontGeneratorDlg::SetColorBallons(const unsigned char *sequenceIn)
 				current_Y -= lenght_Balloon / 2;
 			++column;
 		}
-		DeleteObject(hBrush);
 	}
-	dc.BitBlt(0, 0, dialog_Rect.right, dialog_Rect.bottom,
-           &memDC,
-           0, 0,
-           SRCCOPY);
-
-	CString result1;
-	result1.Format("%d", clock());
-
-	OutputDebugString(result1 + CString("-END") + CString("\n"));
 }
-
-void CfontGeneratorDlg::OnBnClickedOk()
-{
-	//SetColorBallons(sequenceIn);
-
-	RECT dialog_Rect;
-	this->GetClientRect(&dialog_Rect);
-
-	CClientDC dc(this);
-
-	b.CreateCompatibleBitmap( &dc, dialog_Rect.right, dialog_Rect.bottom);
-	memDC.CreateCompatibleDC( &dc ) ;
-	
-	//bMemDCEnabled = TRUE;
-	
-
-	memDC.SelectObject( &b );
-
-	//CBrush brush ( RGB(255,255,255) );
-	//memDC.FillRect( &dialog_Rect, &brush);
-
-	Cycle *cycle = new Cycle(0,25,50,memDC,dc,dialog_Rect, this);
-
-
-
-	// TODO: Add your control notification handler code here
-	//CDialogEx::OnOK();
-}
-
-
-
-
 
 void CfontGeneratorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: Add your message handler code here and/or call default
-
 	CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+
+void CfontGeneratorDlg::OnBnClickedButtonSave()
+{
+	// TODO: Add your control notification handler code here
+}
+
+
+void CfontGeneratorDlg::OnBnClickedButtonClear()
+{
+	// TODO: Add your control notification handler code here
 }
