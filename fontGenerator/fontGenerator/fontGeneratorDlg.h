@@ -27,6 +27,10 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 
+	void clearFromVector();
+	void clearScreen();
+	bool saveSequenceToFile();
+
 	DECLARE_MESSAGE_MAP()
 
 	bool bMemDCEnabled;
@@ -41,4 +45,5 @@ public:
 
 	afx_msg void OnBnClickedButtonSave();
 	afx_msg void OnBnClickedButtonClear();
+	CEdit m_SymbolName;
 };

@@ -10,15 +10,17 @@
 #include <stdio.h>
 #include <cstring>
 
+#include <string>
+#include <fstream>
+#include <istream>
+#include <iostream>
+
 #define count_column 27
 #define count_row 17
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-const unsigned char sequenceIn[] = "ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ";	
-
 
 // CAboutDlg dialog used for App About
 
@@ -65,7 +67,8 @@ CfontGeneratorDlg::CfontGeneratorDlg(CWnd* pParent /*=NULL*/)
 void CfontGeneratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-//	DDX_Control(pDX, ;
+	//	DDX_Control(pDX, ;
+	DDX_Control(pDX, IDC_EDIT_Symbol_Name, m_SymbolName);
 }
 
 BEGIN_MESSAGE_MAP(CfontGeneratorDlg, CDialogEx)
@@ -114,6 +117,8 @@ BOOL CfontGeneratorDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	bMemDCEnabled = FALSE;
+
+	m_SymbolName.SetWindowTextA("");
 		
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -167,7 +172,17 @@ HCURSOR CfontGeneratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CfontGeneratorDlg::OnBnClickedOk()
+void CfontGeneratorDlg::clearFromVector()
+{
+	std::vector < Cycle * >::iterator it;
+	for( it = cycleVec.begin(); it != cycleVec.end(); )
+	{
+		delete *it;
+		it = cycleVec.erase(it);
+	} 
+}
+
+void CfontGeneratorDlg::clearScreen()
 {
 	RECT dialog_Rect;
 	this->GetClientRect(&dialog_Rect);
@@ -183,15 +198,107 @@ void CfontGeneratorDlg::OnBnClickedOk()
 
 	memDC.SelectObject( &b );
 
-	CBrush brush ( RGB(255,255,255) );
+	CBrush brush ( RGB(255,0,255) );
+	memDC.SelectObject(&brush);
 	memDC.FillRect( &dialog_Rect, &brush);
+	Invalidate();
+}
+
+bool CfontGeneratorDlg::saveSequenceToFile()
+{
+	CString symbol;
+	m_SymbolName.GetWindowTextA(symbol);
+
+	CString rezultText;
+	
+	std::string NameFile("../symbols/" + symbol);
+    std::ofstream os;
+
+	os.open(NameFile, std::ios::app);
+    if(!os )
+    {
+        printf("File not found");
+        return(0);
+    }
+
+//	for (int i = 0; i < count_column; ++i)
+	//	rezultText.AppendChar('\n');
+
+	int row = count_row;
+	int column = 0;
+	std::vector < Cycle * >::iterator it;
+	
+	
+	/*for (int j = 0; j < count_column; j+=2)
+	{
+		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
+		{
+			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
+			if (symbol == '0' || symbol == '1')
+				write_file(symbol == '1' ? symbolColor : backGroundColor);
+		}
+		if (j < (count_column-2))
+		{
+			for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+			{
+				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
+				if (symbol == '0' || symbol == '1')
+					write_file(symbol == '1' ? symbolColor : backGroundColor);
+			}
+		}
+	}
+	*/
+
+	int size = cycleVec.size();
+	for (int i = 0; i < size; ++i)
+	{
+		rezultText.AppendChar(cycleVec[row]->isClickedItem() ? '1' : '0');
+
+
+
+		if(row-- <= 0)
+		{
+			row = count_row;
+			rezultText.AppendChar('\n');
+		}
+	}
+
+
+	/*
+	for( it = cycleVec.begin(); it != cycleVec.end(); ++it)
+	{
+		if (row > count_row)
+			++column;
+		if ((*it)->isClickedItem())
+			rezultText.Insert(column, "1");
+		else 
+			rezultText.Insert(column, "0");
+		
+		++row;
+	}
+	*/
+	CT2CA pszConvertedAnsiString (rezultText);
+ 
+    std::string strStd (pszConvertedAnsiString);
+
+    os << strStd.substr(0, strStd.size()) << std::endl;
+    os.close();
+	
+	return true;
+}
+
+void CfontGeneratorDlg::OnBnClickedOk()
+{
+	clearScreen();
+
+	RECT dialog_Rect;
+	this->GetClientRect(&dialog_Rect);
 
 	int row = 0;
 	int column = 0;
 	int lenght_Balloon = dialog_Rect.right / count_column;
 	int current_Y = dialog_Rect.bottom  - lenght_Balloon - lenght_Balloon;
 	int current_X = dialog_Rect.left;
-	Cycle *cycle;
 
 	for (int i = 0; i < 1338; i += 3)
 	{		
@@ -224,13 +331,16 @@ void CfontGeneratorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 }
 
 
+
 void CfontGeneratorDlg::OnBnClickedButtonSave()
 {
-	// TODO: Add your control notification handler code here
+	saveSequenceToFile();
 }
+
 
 
 void CfontGeneratorDlg::OnBnClickedButtonClear()
 {
-	// TODO: Add your control notification handler code here
+	clearFromVector();
+	clearScreen();
 }

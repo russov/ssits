@@ -10,13 +10,15 @@ public:
 	~Cycle(void);
 
 	long GetCurrentRGB();
+	bool isClickedItem();
 		
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnPaint();
 
-	long lRGB;
+	int numRGB;
+	//long lRGB;
 	long lRGBMas[2];
 	int lenghtBalloon;
 };

@@ -12,7 +12,8 @@ Cycle::Cycle(int current_X, int current_Y, int lenght, CWnd *parent)
 	lRGBMas[0] = RGB(0, 255, 0);
 	lRGBMas[1] = RGB(0, 0, 0);
 
-	lRGB = lRGBMas[0];
+	//lRGB = lRGBMas[0];
+	numRGB = 0;
 }
 
 
@@ -22,7 +23,14 @@ Cycle::~Cycle(void)
 
 long Cycle::GetCurrentRGB()
 {
-	return lRGB;
+	return lRGBMas[numRGB];
+}
+
+bool Cycle::isClickedItem()
+{
+	if (numRGB > 0)
+		return true;
+	return false;
 }
 
 BEGIN_MESSAGE_MAP(Cycle, CStatic)
@@ -32,9 +40,8 @@ END_MESSAGE_MAP()
 
 void Cycle::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	static int numRGB = 0;
-
-	lRGB = lRGBMas[(++numRGB)%2];
+	numRGB = (++numRGB)%2;
+	//lRGB = lRGBMas[(++numRGB)%2];
 
 	CWnd::OnLButtonDown(nFlags, point);
 	Invalidate();
@@ -58,7 +65,7 @@ void Cycle::OnPaint()
 
 	CRect rect(0, 0, 0 + lenghtBalloon, 0 + lenghtBalloon);	
 
-	HBRUSH hBrush = CreateSolidBrush(lRGB);
+	HBRUSH hBrush = CreateSolidBrush(lRGBMas[numRGB]);
 	memDC.SelectObject(hBrush);
 	memDC.Ellipse(&rect);
 
