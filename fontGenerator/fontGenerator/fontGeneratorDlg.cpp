@@ -1,4 +1,4 @@
-
+﻿
 // fontGeneratorDlg.cpp : implementation file
 //
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <istream>
 #include <iostream>
+#include <algorithm>
 
 #define count_column 27
 #define count_row 17
@@ -204,14 +205,20 @@ void CfontGeneratorDlg::clearScreen()
 	Invalidate();
 }
 
+bool isEqual(Cycle *c)
+{
+	return c->isClickedItem() ? '1' : '0';
+}
+
 bool CfontGeneratorDlg::saveSequenceToFile()
 {
 	CString symbol;
 	m_SymbolName.GetWindowTextA(symbol);
 
 	CString rezultText;
+	CString partRezultText;
 	
-	std::string NameFile("../symbols/" + symbol);
+	std::string NameFile("symbols/" + symbol);
     std::ofstream os;
 
 	os.open(NameFile, std::ios::app);
@@ -221,62 +228,44 @@ bool CfontGeneratorDlg::saveSequenceToFile()
         return(0);
     }
 
-//	for (int i = 0; i < count_column; ++i)
-	//	rezultText.AppendChar('\n');
-
 	int row = count_row;
 	int column = 0;
-	std::vector < Cycle * >::iterator it;
+	int item = 0;
+	//std::vector < Cycle * >::iterator it;
 	
-	
-	/*for (int j = 0; j < count_column; j+=2)
+	//int needle1[] = {1};
+
+	//std::vector < Cycle * >::iterator it = std::find_if(cycleVec.rbegin(), cycleVec.rend(), isEqual);
+
+	for (int row = 0; row < count_row; ++row)
 	{
-		for (int i = m_Storage_Screen_Point.size() - 1; i >= 0; --i)
+		for (int column = 0; column < count_column; ++column)
 		{
-			char symbol = (m_Storage_Screen_Point[i])[j + shift%(m_Storage_Screen_Point[i].size() - count_column)];
-			if (symbol == '0' || symbol == '1')
-				write_file(symbol == '1' ? symbolColor : backGroundColor);
-		}
-		if (j < (count_column-2))
-		{
-			for (int i = 0; i != m_Storage_Screen_Point.size(); ++i)
+			if(column%2) // не четная
 			{
-				char symbol = (m_Storage_Screen_Point[i])[j + 1 + shift%(m_Storage_Screen_Point[i].size() - count_column)];
-				if (symbol == '0' || symbol == '1')
-					write_file(symbol == '1' ? symbolColor : backGroundColor);
+				if (row == 0)
+				{
+					partRezultText.AppendChar(' ');
+					continue;
+				}
+				else
+					item = row - 1 + ((count_row * column) - column / 2);
 			}
+			else //четная
+			{
+				item = (count_row - row - 1) + ((count_row * column) - column / 2);
+			}
+			partRezultText.AppendChar(cycleVec[item]->isClickedItem() ? '1' : '0');
 		}
-	}
-	*/
+		partRezultText.AppendChar('\n');
 
-	int size = cycleVec.size();
-	for (int i = 0; i < size; ++i)
-	{
-		rezultText.AppendChar(cycleVec[row]->isClickedItem() ? '1' : '0');
-
-
-
-		if(row-- <= 0)
+/*		if (row % 2 && partRezultText.Find('0'))
 		{
-			row = count_row;
-			rezultText.AppendChar('\n');
-		}
+			rezultText.Append(partRezultText);
+			partRezultText.Empty();
+		}*/
 	}
 
-
-	/*
-	for( it = cycleVec.begin(); it != cycleVec.end(); ++it)
-	{
-		if (row > count_row)
-			++column;
-		if ((*it)->isClickedItem())
-			rezultText.Insert(column, "1");
-		else 
-			rezultText.Insert(column, "0");
-		
-		++row;
-	}
-	*/
 	CT2CA pszConvertedAnsiString (rezultText);
  
     std::string strStd (pszConvertedAnsiString);

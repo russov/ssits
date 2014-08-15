@@ -9,8 +9,8 @@ Cycle::Cycle(int current_X, int current_Y, int lenght, CWnd *parent)
 	
 	CStatic::Create("", WS_CHILD|WS_VISIBLE|SS_NOTIFY, *rect, parent, 1235);
 
-	lRGBMas[0] = RGB(0, 255, 0);
-	lRGBMas[1] = RGB(0, 0, 0);
+	lRGBMas[0] = RGB(255, 255, 255);
+	lRGBMas[1] = RGB(0, 255, 0);
 
 	//lRGB = lRGBMas[0];
 	numRGB = 0;
