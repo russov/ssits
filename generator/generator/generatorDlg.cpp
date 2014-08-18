@@ -245,12 +245,22 @@ void CgeneratorDlg::fill_Useful_Data_Screen()
 	for (int i = 0; i < incoming_Sequence.GetLength(); ++i)
 	{
 		std::ifstream in;
-		CString h = CString(CString("..\\symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt"));
-		in.open(CString(CString("..\\symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt")));
+		CString input = CString(incoming_Sequence.GetAt(i));
+		CString symbol;
+
+		symbol = input;
+
+		if (symbol == input.MakeUpper())
+			symbol += ".big";
+		else
+			symbol += ".small";
+
+		//CString h = CString(CString("..\\symbols\\") + symbol);
+		in.open(CString(CString("..\\symbols\\") + symbol));
 		
 		if (!in.good())
 		{
-			in.open(CString(CString("symbols\\") + CString(incoming_Sequence.GetAt(i)) + CString(".txt")));
+			in.open(CString(CString("symbols\\") + symbol));
 			if (!in.good())
 			{
 				m_Not_Found_Symbols.ShowWindow(TRUE);

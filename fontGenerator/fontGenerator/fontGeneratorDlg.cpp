@@ -209,14 +209,22 @@ bool isEqual(Cycle *c)
 bool CfontGeneratorDlg::saveSequenceToFile()
 {
 	CString symbol;
-	m_SymbolName.GetWindowTextA(symbol);
+	CString input;
+	m_SymbolName.GetWindowTextA(input);
+
+	symbol = input;
+
+	if (input.MakeUpper() == symbol)
+		symbol += ".big";
+	else
+		symbol += ".small";
 
 	CString rezultText;
-	
+
 	std::string NameFile("symbols/" + symbol);
     std::ofstream os;
 
-	os.open(NameFile, std::ios::app);
+	os.open(NameFile, std::ios::out);
     if(!os )
     {
         printf("File not found");
@@ -260,14 +268,15 @@ bool CfontGeneratorDlg::saveSequenceToFile()
 			}
 			rezultText.AppendChar(cycleVec[item]->isClickedItem() ? '1' : '0');
 		}
-		rezultText.AppendChar('\n');
+		if (row < count_row - 1)
+			rezultText.AppendChar('\n');
 	}
 
 	CT2CA pszConvertedAnsiString (rezultText);
  
     std::string strStd (pszConvertedAnsiString);
 
-    os << strStd.substr(0, strStd.size()) << std::endl;
+    os << strStd.substr(0, strStd.size());// << std::endl;
     os.close();
 	
 	return true;
@@ -276,6 +285,7 @@ bool CfontGeneratorDlg::saveSequenceToFile()
 void CfontGeneratorDlg::OnBnClickedOk()
 {
 	clearScreen();
+	clearFromVector();
 
 	RECT dialog_Rect;
 	this->GetClientRect(&dialog_Rect);
