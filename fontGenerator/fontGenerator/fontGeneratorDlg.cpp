@@ -207,7 +207,7 @@ void CfontGeneratorDlg::clearScreen()
 
 bool isEqual(Cycle *c)
 {
-	return c->isClickedItem() ? '1' : '0';
+	return c->isClickedItem() ? true : false;
 }
 
 bool CfontGeneratorDlg::saveSequenceToFile()
@@ -216,7 +216,6 @@ bool CfontGeneratorDlg::saveSequenceToFile()
 	m_SymbolName.GetWindowTextA(symbol);
 
 	CString rezultText;
-	CString partRezultText;
 	
 	std::string NameFile("symbols/" + symbol);
     std::ofstream os;
@@ -231,21 +230,29 @@ bool CfontGeneratorDlg::saveSequenceToFile()
 	int row = count_row;
 	int column = 0;
 	int item = 0;
-	//std::vector < Cycle * >::iterator it;
+
+	std::vector < Cycle * >::iterator lastSymbolIt = cycleVec.end();
+	std::vector < Cycle * >::iterator it = std::find_if(cycleVec.begin(), cycleVec.end(), isEqual);
+
+	while (it != cycleVec.end())
+	{
+		lastSymbolIt = it;
+		it = std::find_if(++it, cycleVec.end(), isEqual);
+	}
+
+	int position = 0;
+	if (lastSymbolIt != cycleVec.end())
+		position = (lastSymbolIt - cycleVec.begin()) / (count_row * 2 - 1) + 1;
 	
-	//int needle1[] = {1};
-
-	//std::vector < Cycle * >::iterator it = std::find_if(cycleVec.rbegin(), cycleVec.rend(), isEqual);
-
 	for (int row = 0; row < count_row; ++row)
 	{
-		for (int column = 0; column < count_column; ++column)
+		for (int column = 0; column < position * 2; ++column)
 		{
 			if(column%2) // не четная
 			{
 				if (row == 0)
 				{
-					partRezultText.AppendChar(' ');
+					rezultText.AppendChar(' ');
 					continue;
 				}
 				else
@@ -255,15 +262,9 @@ bool CfontGeneratorDlg::saveSequenceToFile()
 			{
 				item = (count_row - row - 1) + ((count_row * column) - column / 2);
 			}
-			partRezultText.AppendChar(cycleVec[item]->isClickedItem() ? '1' : '0');
+			rezultText.AppendChar(cycleVec[item]->isClickedItem() ? '1' : '0');
 		}
-		partRezultText.AppendChar('\n');
-
-/*		if (row % 2 && partRezultText.Find('0'))
-		{
-			rezultText.Append(partRezultText);
-			partRezultText.Empty();
-		}*/
+		rezultText.AppendChar('\n');
 	}
 
 	CT2CA pszConvertedAnsiString (rezultText);
