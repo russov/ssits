@@ -14,6 +14,7 @@ Cycle::Cycle(int current_X, int current_Y, int lenght, CWnd *parent)
 
 	//lRGB = lRGBMas[0];
 	numRGB = 0;
+	lastNumRGB = 0;
 }
 
 
@@ -36,15 +37,23 @@ bool Cycle::isClickedItem()
 BEGIN_MESSAGE_MAP(Cycle, CStatic)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_PAINT()
+	ON_WM_MOUSEMOVE()
+	ON_WM_NCACTIVATE()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 void Cycle::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	numRGB = (++numRGB)%2;
-	//lRGB = lRGBMas[(++numRGB)%2];
-
-	CWnd::OnLButtonDown(nFlags, point);
+	lastNumRGB = numRGB;
+	changeState();
+	
 	Invalidate();
+	CWnd::OnLButtonDown(nFlags, point);
+}
+
+void Cycle::changeState()
+{
+	numRGB = (++numRGB)%2;
 }
 
 void Cycle::OnPaint()
@@ -75,4 +84,31 @@ void Cycle::OnPaint()
            &memDC,
            0, 0,
            SRCCOPY);
+}
+
+void Cycle::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if( (nFlags & MK_LBUTTON)==MK_LBUTTON )
+	{
+		numRGB = (lastNumRGB + 1)%2;
+	}
+
+	Invalidate();
+	CStatic::OnMouseMove(nFlags, point);
+}
+
+
+BOOL Cycle::OnNcActivate(BOOL bActive)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	return CStatic::OnNcActivate(bActive);
+}
+
+
+void Cycle::OnKillFocus(CWnd* pNewWnd)
+{
+	CStatic::OnKillFocus(pNewWnd);
+
+	// TODO: Add your message handler code here
 }
