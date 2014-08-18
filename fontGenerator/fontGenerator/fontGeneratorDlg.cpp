@@ -53,11 +53,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
 // CfontGeneratorDlg dialog
-
-
-
 
 CfontGeneratorDlg::CfontGeneratorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CfontGeneratorDlg::IDD, pParent)
@@ -320,14 +316,10 @@ void CfontGeneratorDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	CDialogEx::OnLButtonDown(nFlags, point);
 }
 
-
-
 void CfontGeneratorDlg::OnBnClickedButtonSave()
 {
 	saveSequenceToFile();
 }
-
-
 
 void CfontGeneratorDlg::OnBnClickedButtonClear()
 {
